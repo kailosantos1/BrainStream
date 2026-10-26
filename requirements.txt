@@ -1,0 +1,2 @@
+# Compatível com Python 3.9.6 no ambiente atual.
+Django==4.2.30

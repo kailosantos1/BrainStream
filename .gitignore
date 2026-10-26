@@ -1,0 +1,28 @@
+# Ambientes virtuais
+venv/
+.venv/
+env/
+
+# Python e Django
+__pycache__/
+*.py[cod]
+*.sqlite3
+db.sqlite3
+*.log
+*.tmp
+
+# Configuração local e segredos
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+secrets/
+
+# Arquivos locais de ferramentas e sistema
+.DS_Store
+.vscode/
+.idea/
+media/
+staticfiles/
