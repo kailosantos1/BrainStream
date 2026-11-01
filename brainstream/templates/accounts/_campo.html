@@ -1,0 +1,17 @@
+<div class="auth-field">
+  <div class="auth-label-row">
+    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {% if forgot %}<a class="auth-link auth-forgot" href="{% url 'accounts:recuperar_senha' %}">Esqueceu a senha?</a>{% endif %}
+  </div>
+  {% if field.field.widget.input_type == 'password' %}
+    <div class="auth-password">
+      {{ field }}
+      <button class="auth-reveal" type="button" aria-label="Mostrar senha" aria-pressed="false" aria-controls="{{ field.id_for_label }}" data-reveal-password hidden><i class="bi bi-eye" aria-hidden="true"></i></button>
+    </div>
+  {% else %}
+    {{ field }}
+  {% endif %}
+  {% if field.errors %}
+    <div class="invalid-feedback d-block" id="{{ field.id_for_label }}-erro">{% for error in field.errors %}<p>{{ error }}</p>{% endfor %}</div>
+  {% endif %}
+</div>

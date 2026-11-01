@@ -1,0 +1,57 @@
+{% extends 'estudos/base_estudo.html' %}
+{% load static %}
+{% block title %}{{ sessao.tema.nome }} · Modo Speedrun · BrainStream{% endblock %}
+{% block estudo_css %}<link rel="stylesheet" href="{% static 'css/modo_speedrun.css' %}">{% endblock %}
+{% block icone %}bi-lightning-charge{% endblock %}
+{% block chips %}
+  <span class="chip chip-accent">Modo Speedrun</span>
+  <span class="chip" title="Dificuldade escolhida no painel">{{ sessao.get_dificuldade_display }}</span>
+  {% if simuladas %}<span class="chip" title="Afirmações do banco simulado: sem IA configurada ou a geração falhou">Afirmações simuladas</span>{% endif %}
+{% endblock %}
+{% block top_meta %}<button class="btn btn-icon speedrun-som" type="button" aria-pressed="true" aria-label="Efeitos sonoros" title="Silenciar efeitos sonoros" hidden data-speedrun-som><i class="bi bi-volume-up" aria-hidden="true"></i></button>{% endblock %}
+{% block pontos %}{{ pontos }}{% endblock %}
+{% block conteudo %}
+    <div class="speedrun-timer{% if restante_ms is not None and restante_ms <= 3000 %} is-urgent{% endif %}" data-speedrun-timer data-restante="{{ restante_ms|default_if_none:'' }}" data-limite="{{ limite_segundos }}"{% if not corrente or aguardando %} hidden{% endif %}>
+      <div class="speedrun-timer-head">
+        <span id="speedrun-timer-rotulo">Tempo restante</span>
+        <span class="speedrun-timer-num" role="timer" aria-labelledby="speedrun-timer-rotulo" data-speedrun-segundos>{% if restante_ms is not None %}{% widthratio restante_ms 1000 1 %}{% else %}{{ limite_segundos }}{% endif %}</span>
+      </div>
+      <div class="speedrun-timer-track" aria-hidden="true"><span class="speedrun-timer-bar" data-speedrun-barra></span></div>
+      <p class="visually-hidden" aria-live="assertive" data-speedrun-aviso></p>
+    </div>
+
+    <div class="estudo-scroll" data-estudo-scroll>
+      <ol class="estudo-feed" aria-label="Speedrun com o Enéas" aria-live="polite" data-estudo-feed>
+        <li class="estudo-msg estudo-msg-eneas">
+          {% include 'estudos/_avatar_eneas.html' %}
+          <div class="estudo-msg-body">
+            <div class="estudo-bubble">
+              <span class="estudo-badge">Enéas · tutor</span>
+              <p>Modo Speedrun ativado para {{ sessao.tema.nome }}! Você tem {{ limite_segundos }} segundos por afirmação. Responda Verdadeiro ou Falso o mais rápido possível. Boa sorte!</p>
+            </div>
+            <time class="estudo-time" datetime="{{ sessao.data_inicio|date:'c' }}">{{ sessao.data_inicio|time:'H:i' }}</time>
+          </div>
+        </li>
+        {% if aguardando %}{% include 'estudos/_speedrun_inicio.html' %}{% endif %}
+        {% for afirmacao in visiveis %}
+          {% include 'estudos/_speedrun_afirmacao.html' %}
+          {% if afirmacao.respondida %}{% include 'estudos/_speedrun_resposta.html' %}{% endif %}
+        {% endfor %}
+        {% if concluida %}{% include 'estudos/_speedrun_final.html' %}{% endif %}
+      </ol>
+    </div>
+
+    <div class="estudo-composer-wrap speedrun-foot">
+      {% if corrente %}
+        <form class="speedrun-actions" method="post" action="{% url 'estudos:modo_speedrun' sessao_id=sessao.pk %}" data-speedrun-form{% if aguardando %} hidden{% endif %}>
+          {% csrf_token %}
+          <input type="hidden" name="afirmacao" value="{{ corrente.ordem }}" data-speedrun-ordem>
+          <button class="btn speedrun-btn speedrun-btn-v" type="submit" name="resposta" value="V"><i class="bi bi-check-lg" aria-hidden="true"></i>Verdadeiro</button>
+          <button class="btn speedrun-btn speedrun-btn-f" type="submit" name="resposta" value="F"><i class="bi bi-x-lg" aria-hidden="true"></i>Falso</button>
+        </form>
+      {% endif %}
+      <p class="estudo-error" role="alert" data-speedrun-erro{% if not erro %} hidden{% endif %}>{{ erro }}</p>
+      <p class="estudo-hint" data-speedrun-dica>{% if concluida %}Speedrun concluído. Seus pontos já aparecem no painel.{% elif aguardando %}O relógio só começa quando você clicar em "Iniciar Speedrun".{% else %}{{ limite_segundos }} segundos por afirmação. Respostas depois do prazo contam como tempo esgotado.{% endif %}</p>
+    </div>
+{% endblock %}
+{% block estudo_js %}<script src="{% static 'js/modo_speedrun.js' %}"></script>{% endblock %}

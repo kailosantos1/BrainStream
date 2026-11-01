@@ -1,0 +1,22 @@
+<li class="estudo-msg estudo-msg-{{ mensagem.autor }}" id="mensagem-{{ mensagem.pk }}">
+  {% if mensagem.autor == 'estudante' %}
+    <span class="estudo-avatar estudo-avatar-estudante" aria-hidden="true">{{ iniciais }}</span>
+  {% elif mensagem.autor == 'eneas' %}
+    {% include 'estudos/_avatar_eneas.html' %}
+  {% else %}
+    <span class="estudo-avatar estudo-avatar-sistema" aria-hidden="true"><i class="bi bi-shield-check"></i></span>
+  {% endif %}
+  <div class="estudo-msg-body">
+    <div class="estudo-bubble">
+      {% if mensagem.autor == 'eneas' %}
+        <span class="estudo-badge">Enéas · tutor</span>
+      {% elif mensagem.autor == 'sistema' %}
+        <span class="estudo-badge estudo-badge-sistema">Aviso do BrainStream</span>
+      {% else %}
+        <span class="visually-hidden">Você disse:</span>
+      {% endif %}
+      {{ mensagem.conteudo|linebreaks }}
+    </div>
+    <time class="estudo-time" datetime="{{ mensagem.data_envio|date:'c' }}">{{ mensagem.data_envio|time:'H:i' }}</time>
+  </div>
+</li>

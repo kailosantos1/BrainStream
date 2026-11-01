@@ -5,13 +5,92 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}BrainStream{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}BrainStream é um tutor de estudos com IA que guia seu raciocínio com perguntas.{% endblock %}">
+  <script>
+    (function () {
+      var root = document.documentElement;
+      // Gate das animações: sem JS, nada fica escondido.
+      root.classList.add('js');
+      try {
+        var theme = localStorage.getItem('brainstream-theme') || 'dark';
+        root.dataset.theme = theme;
+        root.dataset.bsTheme = theme;
+      } catch (error) {
+        root.dataset.theme = 'dark';
+        root.dataset.bsTheme = 'dark';
+      }
+    }());
+  </script>
+<link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+  <link rel="preload" href="{% static 'vendor/fonts/hanken-grotesk/hanken-grotesk-latin-var.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap-icons/bootstrap-icons.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
   {% block extra_css %}{% endblock %}
 </head>
-<body>
-  <main>
+<body id="top">
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  {% block site_header %}
+  <header class="site-header">
+    <nav class="navbar navbar-expand-lg" aria-label="Navegação principal">
+      <div class="container">
+        <a class="navbar-brand" href="{% if user.is_authenticated %}{% url 'core:painel' %}{% else %}{% url 'core:index' %}{% endif %}">
+          <span class="brand-mark" aria-hidden="true"></span>BrainStream
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navigation" aria-controls="main-navigation" aria-expanded="false" aria-label="Abrir navegação">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="main-navigation">
+          <ul class="navbar-nav mx-lg-auto mb-3 mb-lg-0">
+            <li class="nav-item"><a class="nav-link" href="#como-funciona">Como funciona</a></li>
+            <li class="nav-item"><a class="nav-link" href="#modos-estudo">Modos</a></li>
+            <li class="nav-item"><a class="nav-link" href="#painel-evolucao">Painel</a></li>
+            <li class="nav-item"><a class="nav-link" href="#pergunte">Experimente</a></li>
+          </ul>
+          <div class="d-flex flex-wrap align-items-center gap-2">
+            <button id="theme-toggle" class="btn btn-icon" type="button" aria-label="Ativar tema claro" aria-pressed="true">
+              <i class="bi bi-sun" aria-hidden="true"></i>
+              <span class="visually-hidden" data-theme-label>Tema escuro ativo</span>
+            </button>
+            {% if user.is_authenticated %}
+              <a class="btn btn-primary btn-sm-nav" href="{% url 'core:painel' %}">Ir para o painel</a>
+            {% else %}
+              <a class="nav-link" href="{% url 'accounts:login' %}">Entrar</a>
+              <a class="btn btn-primary btn-sm-nav" href="{% url 'accounts:cadastro' %}">Começar</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+  {% endblock %}
+
+  {% block main %}
+  <main class="site-main" id="conteudo">
     {% block content %}{% endblock %}
   </main>
+  {% endblock %}
+  {% block site_footer %}
+  <footer class="site-footer">
+    <div class="container site-footer-inner">
+      <div class="site-footer-brand">
+        <a class="footer-brand" href="#top"><span class="brand-mark" aria-hidden="true"></span>BrainStream</a>
+        <p>Tutor de estudos com IA, guiado pelo método socrático.</p>
+      </div>
+      <nav class="footer-nav" aria-label="Navegação do rodapé">
+        <a href="#como-funciona">Como funciona</a>
+        <a href="#modos-estudo">Modos</a>
+        <a href="#painel-evolucao">Painel</a>
+        <a href="#pergunte">Experimente</a>
+      </nav>
+      <div class="site-footer-meta">
+        <p>Projeto acadêmico em desenvolvimento.</p>
+        <a href="#top" class="footer-link">Voltar ao topo <i class="bi bi-arrow-up" aria-hidden="true"></i></a>
+      </div>
+    </div>
+  </footer>
+  {% endblock %}
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
   <script src="{% static 'js/base.js' %}"></script>
   {% block extra_js %}{% endblock %}
 </body>

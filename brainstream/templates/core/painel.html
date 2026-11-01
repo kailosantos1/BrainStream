@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load static painel_tags %}
+{% block title %}Painel · BrainStream{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product-ui.css' %}">
+<link rel="stylesheet" href="{% static 'css/painel.css' %}">
+{% endblock %}
+{% block site_header %}{% endblock %}
+{% block site_footer %}{% endblock %}
+{% block main %}
+<div class="painel">
+  <aside class="painel-side offcanvas-lg offcanvas-start" id="painel-side" tabindex="-1" aria-label="Histórico e perfil">
+    <div class="painel-side-head">
+      <a class="painel-brand" href="{% url 'core:painel' %}"><span class="brand-mark" aria-hidden="true"></span>BrainStream</a>
+      <button type="button" class="btn btn-icon d-lg-none" data-bs-dismiss="offcanvas" data-bs-target="#painel-side" aria-label="Fechar histórico"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+    </div>
+
+    <section class="painel-history" aria-labelledby="historico-title">
+      <h2 class="painel-side-title" id="historico-title">Histórico de estudos</h2>
+      {% include 'core/_historico.html' %}
+    </section>
+
+    {% rodape_perfil %}
+  </aside>
+
+  <main class="painel-main" id="conteudo">
+    <header class="painel-top">
+      <button class="btn btn-icon d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#painel-side" aria-controls="painel-side" aria-label="Abrir histórico"><i class="bi bi-list" aria-hidden="true"></i></button>
+      <div class="painel-greeting">
+        <h1>Olá, {{ user.get_short_name }}</h1>
+        <p>O que vamos estudar hoje?</p>
+      </div>
+      <button id="theme-toggle" class="btn btn-icon" type="button" aria-label="Ativar tema claro" aria-pressed="true">
+        <i class="bi bi-sun" aria-hidden="true"></i>
+        <span class="visually-hidden" data-theme-label>Tema escuro ativo</span>
+      </button>
+    </header>
+
+    {% for message in messages %}
+      <div class="painel-message" role="status"><i class="bi bi-check-circle" aria-hidden="true"></i><p>{{ message }}</p></div>
+    {% endfor %}
+
+    <section class="painel-card" aria-labelledby="iniciar-title">
+      <h2 class="visually-hidden" id="iniciar-title">Iniciar sessão de estudo</h2>
+      <form method="post" action="{% url 'core:painel' %}" novalidate data-iniciar-form>
+        {% csrf_token %}
+        <div class="painel-field">
+          <label class="painel-label" for="{{ form.tema.id_for_label }}">Tema de estudo</label>
+          <input class="form-control painel-input{% if form.tema.errors %} is-invalid{% endif %}" type="text" name="{{ form.tema.html_name }}" id="{{ form.tema.id_for_label }}" value="{{ form.tema.value|default_if_none:'' }}" maxlength="{{ form.tema.field.max_length }}" placeholder="Digite o tema que deseja estudar... (ex: Segunda Guerra Mundial, Fotossíntese)" autocomplete="off" required{% if form.tema.errors %} aria-invalid="true" aria-describedby="tema-erro"{% endif %}>
+          {% if form.tema.errors %}<p class="painel-error" id="tema-erro">{{ form.tema.errors.0 }}</p>{% endif %}
+          {% if sugestoes %}
+            <div class="painel-suggestions" role="group" aria-label="Sugestões de temas" data-tema-sugestoes hidden>
+              {% for nome in sugestoes %}
+                <button class="painel-suggestion" type="button" data-tema="{{ nome }}" aria-pressed="false">{{ nome }}</button>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <fieldset class="painel-field painel-modes"{% if form.modo.errors %} aria-describedby="modo-erro"{% endif %}>
+          <legend class="painel-label">Escolha o modo de estudo</legend>
+          <div class="row g-3">
+            {% for valor, titulo, descricao, icone, carregando in modos %}
+              <div class="col-md-4">
+                <input class="painel-mode-input" type="radio" name="{{ form.modo.html_name }}" id="modo-{{ valor }}" value="{{ valor }}" data-carregando-texto="{{ carregando }}"{% if form.modo.value == valor %} checked{% endif %}>
+                <label class="painel-mode painel-mode-{{ valor }}" for="modo-{{ valor }}">
+                  <span class="painel-mode-icon" aria-hidden="true"><i class="bi {{ icone }}"></i></span>
+                  <span class="painel-mode-title">{{ titulo }}</span>
+                  <span class="painel-mode-desc">{{ descricao }}</span>
+                  <span class="painel-mode-check" aria-hidden="true"></span>
+                </label>
+              </div>
+            {% endfor %}
+          </div>
+          {% if form.modo.errors %}<p class="painel-error" id="modo-erro">{{ form.modo.errors.0 }}</p>{% endif %}
+        </fieldset>
+
+        {# Régua de dificuldade: aparece só com Quiz ou Speedrun marcados (CSS :has); o Modo Guiado fica no médio. #}
+        <fieldset class="painel-field painel-dificuldade" data-dificuldade{% if form.dificuldade.errors %} aria-describedby="dificuldade-erro"{% endif %}>
+          <legend class="painel-label">Dificuldade</legend>
+          <div class="painel-dificuldade-opcoes">
+            {% for valor, rotulo in form.fields.dificuldade.choices %}
+              <input class="painel-dificuldade-input" type="radio" name="{{ form.dificuldade.html_name }}" id="dificuldade-{{ valor }}" value="{{ valor }}"{% if form.dificuldade.value|default:'medio' == valor %} checked{% endif %}>
+              <label class="painel-dificuldade-opcao" for="dificuldade-{{ valor }}">{{ rotulo }}</label>
+            {% endfor %}
+          </div>
+          {% if form.dificuldade.errors %}<p class="painel-error" id="dificuldade-erro">{{ form.dificuldade.errors.0 }}</p>{% endif %}
+        </fieldset>
+
+        <button class="btn btn-primary btn-lg painel-start" type="submit" data-iniciar-botao>Iniciar sessão de estudo <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
+      </form>
+    </section>
+
+    <section class="painel-kpis" aria-label="Indicadores de gamificação">
+      <div class="painel-kpi painel-kpi-info">
+        <span class="painel-kpi-label"><i class="bi bi-collection" aria-hidden="true"></i>Sessões esta semana</span>
+        <span class="painel-kpi-value" data-kpi="sessoes">{{ sessoes_semana }}</span>
+        <span class="painel-kpi-note">concluídas desde segunda</span>
+      </div>
+      <div class="painel-kpi painel-kpi-success">
+        <span class="painel-kpi-label"><i class="bi bi-bullseye" aria-hidden="true"></i>Taxa de acerto</span>
+        <span class="painel-kpi-value" data-kpi="acerto">{% if taxa_acerto is not None %}{{ taxa_acerto }}%{% else %}—{% endif %}</span>
+        <span class="painel-kpi-note">{% if taxa_acerto is not None %}em quizzes e speedruns{% else %}aparece após seu primeiro quiz{% endif %}</span>
+      </div>
+      <div class="painel-kpi painel-kpi-warning">
+        <span class="painel-kpi-label"><i class="bi bi-fire" aria-hidden="true"></i>Sequência atual</span>
+        <span class="painel-kpi-value" data-kpi="sequencia">{{ sequencia }} dia{{ sequencia|pluralize }}</span>
+        <span class="painel-kpi-note">{% if sequencia %}dias seguidos estudando{% else %}estude hoje para começar{% endif %}</span>
+      </div>
+    </section>
+
+    <section class="painel-card painel-ranking" aria-labelledby="ranking-title">
+      <div class="painel-ranking-head">
+        <h2 id="ranking-title">Ranking semanal</h2>
+        <span class="painel-ranking-reset">Reinicia em {{ ranking.dias_para_reset }} dia{{ ranking.dias_para_reset|pluralize }}</span>
+        <button class="btn btn-ghost painel-ranking-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#ranking-lista" aria-expanded="true" aria-controls="ranking-lista" hidden data-ranking-toggle>
+          <i class="bi bi-chevron-up" aria-hidden="true"></i><span>Ocultar</span>
+        </button>
+      </div>
+      <div class="collapse show" id="ranking-lista">
+        {% if ranking.linhas %}
+          <ol class="painel-ranking-list">
+            {% for linha in ranking.linhas %}
+              {% include 'core/_ranking_linha.html' %}
+            {% endfor %}
+            {% if ranking.minha_linha %}
+              <li class="painel-ranking-gap" aria-hidden="true">…</li>
+              {% include 'core/_ranking_linha.html' with linha=ranking.minha_linha %}
+            {% endif %}
+          </ol>
+          {% if not ranking.posicao %}<p class="painel-empty">Conclua uma sessão com pontos para entrar no ranking desta semana.</p>{% endif %}
+        {% else %}
+          <p class="painel-empty">Ninguém pontuou nesta semana ainda. Conclua uma sessão para abrir o ranking.</p>
+        {% endif %}
+      </div>
+    </section>
+  </main>
+</div>
+{% include 'core/_carregando.html' %}
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'js/carregando.js' %}"></script>
+<script src="{% static 'js/historico.js' %}"></script>
+<script src="{% static 'js/painel.js' %}"></script>
+{% endblock %}

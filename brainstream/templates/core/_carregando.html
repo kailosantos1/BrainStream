@@ -1,0 +1,11 @@
+{% comment %}
+  Camada de carregamento: aparece (via carregando.js) quando a próxima página demora mais de 500 ms,
+  como na geração de questões pela IA. Sem JS fica oculta e vale o indicador do navegador.
+{% endcomment %}
+<div class="carregando" data-carregando-camada hidden>
+  <div class="carregando-cartao" role="status" aria-live="polite">
+    <span class="carregando-marca" aria-hidden="true"><span class="brand-mark"></span></span>
+    <p class="carregando-texto" data-carregando-texto></p>
+    <p class="carregando-dica">Isso costuma levar só alguns segundos.</p>
+  </div>
+</div>

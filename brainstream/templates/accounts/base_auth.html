@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product-ui.css' %}">
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+{% block site_header %}{% endblock %}
+{% block site_footer %}{% endblock %}
+{% block main %}
+<div class="auth">
+  <aside class="auth-aside" aria-label="Sobre o BrainStream">
+    <a class="auth-brand" href="{% url 'core:index' %}"><span class="brand-mark" aria-hidden="true"></span>BrainStream</a>
+    <figure class="auth-quote">
+      <blockquote>
+        <p>“O conhecimento mais valioso é aquele que você descobre por conta própria.”</p>
+      </blockquote>
+      <figcaption>Aprendizado ativo guiado por IA, para o século XXI</figcaption>
+    </figure>
+    <div class="auth-history">
+      <ul class="auth-sessions" aria-label="Exemplo de histórico de estudos">
+        <li class="auth-session">
+          <span class="auth-session-icon" aria-hidden="true"><i class="bi bi-file-earmark-text"></i></span>
+          <span class="auth-session-text"><span class="auth-session-title">Biologia: Fotossíntese</span><span class="auth-session-meta">Hoje · Quiz</span></span>
+          <span class="chip chip-success">Concluído</span>
+        </li>
+        <li class="auth-session">
+          <span class="auth-session-icon" aria-hidden="true"><i class="bi bi-chat-dots"></i></span>
+          <span class="auth-session-text"><span class="auth-session-title">História: 2ª Guerra Mundial</span><span class="auth-session-meta">Ontem · Guiado</span></span>
+          <span class="chip chip-warning">Revisar</span>
+        </li>
+        <li class="auth-session">
+          <span class="auth-session-icon" aria-hidden="true"><i class="bi bi-lightning-charge"></i></span>
+          <span class="auth-session-text"><span class="auth-session-title">Matemática: Funções do 2º grau</span><span class="auth-session-meta">11 ago · Speedrun</span></span>
+          <span class="chip chip-info">Em progresso</span>
+        </li>
+      </ul>
+      <p class="auth-note">Dados ilustrativos</p>
+    </div>
+  </aside>
+
+  <main class="auth-main" id="conteudo">
+    <div class="auth-topbar">
+      <a class="auth-brand auth-brand-compact" href="{% url 'core:index' %}"><span class="brand-mark" aria-hidden="true"></span>BrainStream</a>
+      <button id="theme-toggle" class="btn btn-icon" type="button" aria-label="Ativar tema claro" aria-pressed="true">
+        <i class="bi bi-sun" aria-hidden="true"></i>
+        <span class="visually-hidden" data-theme-label>Tema escuro ativo</span>
+      </button>
+    </div>
+    <div class="auth-panel">
+      <div class="auth-card">
+        {% for message in messages %}
+          <div class="auth-alert auth-mensagem{% if message.level_tag != 'error' %} is-info{% endif %}" role="{% if message.level_tag == 'error' %}alert{% else %}status{% endif %}">
+            <i class="bi {% if message.level_tag == 'error' %}bi-exclamation-circle{% else %}bi-info-circle{% endif %}" aria-hidden="true"></i>
+            <div><p>{{ message }}</p></div>
+          </div>
+        {% endfor %}
+        {% block auth_content %}{% endblock %}
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}
+{% block extra_js %}<script src="{% static 'js/auth.js' %}"></script>{% endblock %}

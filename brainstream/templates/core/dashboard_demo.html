@@ -1,0 +1,119 @@
+{% comment %}
+  Espelho ilustrativo do painel real (core/painel.html): lateral com histórico e perfil, tema livre com
+  sugestões, os três modos com a régua de dificuldade, indicadores e ranking semanal. O HTML já é o
+  estado final (sem JS, com movimento reduzido e no celular); landing.js só anima a entrada no scroll e
+  deixa escolher modo, dificuldade e sugestão.
+{% endcomment %}
+<section id="painel-evolucao" class="section dashboard-preview-section" aria-labelledby="dashboard-preview-title">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <h2 id="dashboard-preview-title">Sua evolução, num só lugar.</h2>
+      <p>O mesmo painel que você usa todo dia: escolha o tema e o modo, acompanhe sessões, acertos, sequência e ranking.</p>
+    </div>
+  </div>
+  <div class="dashboard-scroll-track" data-dashboard-track>
+    <div class="dashboard-scroll-stage">
+      <div class="container">
+        <div class="dashboard-demo app-window" data-ui data-dashboard-demo role="group" aria-label="Demonstração ilustrativa do painel de estudos" aria-describedby="dashboard-demo-note">
+          <div class="dashboard-demo-label app-bar">
+            <span class="app-dots" aria-hidden="true"><span></span><span></span><span></span></span>
+            <span class="app-title">BrainStream</span>
+            <span class="app-crumb">Painel</span>
+            <span id="dashboard-demo-note" class="app-badge">Dados exclusivamente ilustrativos</span>
+          </div>
+
+          <aside class="dashboard-sidebar" data-dashboard-part="shell" aria-label="Histórico e perfil ilustrativos">
+            <p class="dashboard-side-title">Histórico de estudos</p>
+            <ul class="dashboard-history">
+              <li class="dashboard-history-item is-current">
+                <span class="dashboard-history-icon" aria-hidden="true"><i class="bi bi-file-earmark-text"></i></span>
+                <span class="dashboard-history-body">
+                  <span class="dashboard-history-title">Biologia: Fotossíntese</span>
+                  <span class="dashboard-history-meta">Hoje · Quiz <span class="chip chip-success">Concluído</span></span>
+                  <span class="bar dashboard-history-bar" aria-hidden="true"><span></span></span>
+                </span>
+              </li>
+              <li class="dashboard-history-item">
+                <span class="dashboard-history-icon" aria-hidden="true"><i class="bi bi-chat-dots"></i></span>
+                <span class="dashboard-history-body">
+                  <span class="dashboard-history-title">História: 2ª Guerra Mundial</span>
+                  <span class="dashboard-history-meta">Ontem · Guiado <span class="chip chip-warning">Revisar</span></span>
+                </span>
+              </li>
+              <li class="dashboard-history-item">
+                <span class="dashboard-history-icon" aria-hidden="true"><i class="bi bi-lightning-charge"></i></span>
+                <span class="dashboard-history-body">
+                  <span class="dashboard-history-title">Física: Termodinâmica</span>
+                  <span class="dashboard-history-meta">Seg · Speedrun <span class="chip chip-info">Em progresso</span></span>
+                </span>
+              </li>
+            </ul>
+            <div class="dashboard-profile">
+              <span class="dashboard-profile-avatar" aria-hidden="true">VC</span>
+              <span class="dashboard-profile-text"><strong>Você</strong><span>1.240 pts · Meu perfil</span></span>
+            </div>
+          </aside>
+
+          <div class="dashboard-content" data-dashboard-content>
+            <div class="dashboard-welcome">
+              <h3>Olá, estudante</h3>
+              <p>O que vamos estudar hoje?</p>
+            </div>
+
+            <div class="dashboard-grid">
+              <section class="dashboard-panel dashboard-start" data-dashboard-part="start" aria-label="Iniciar sessão de estudo (ilustrativo)">
+                <p class="dashboard-label">Tema de estudo</p>
+                <p class="dashboard-field" data-dashboard-field>O que você quer aprender agora?</p>
+                <div class="dashboard-suggestions" role="group" aria-label="Sugestões de temas">
+                  <button type="button" class="dashboard-suggestion" aria-pressed="false" data-dashboard-tema>Biologia: Fotossíntese</button>
+                  <button type="button" class="dashboard-suggestion" aria-pressed="false" data-dashboard-tema>História</button>
+                  <button type="button" class="dashboard-suggestion" aria-pressed="false" data-dashboard-tema>Física</button>
+                </div>
+
+                <p class="dashboard-label" id="dashboard-modos-titulo">Escolha o modo de estudo</p>
+                <div class="dashboard-modes" role="group" aria-labelledby="dashboard-modos-titulo">
+                  <button type="button" class="dashboard-mode" aria-pressed="false" data-dashboard-modo="guiado">
+                    <i class="bi bi-chat-dots" aria-hidden="true"></i><span class="dashboard-mode-title">Modo Guiado</span><span class="dashboard-mode-desc">Diálogo guiado por perguntas</span>
+                  </button>
+                  <button type="button" class="dashboard-mode" aria-pressed="true" data-dashboard-modo="quiz">
+                    <i class="bi bi-file-earmark-text" aria-hidden="true"></i><span class="dashboard-mode-title">Modo Quiz</span><span class="dashboard-mode-desc">Múltipla escolha com feedback</span>
+                  </button>
+                  <button type="button" class="dashboard-mode" aria-pressed="false" data-dashboard-modo="speedrun">
+                    <i class="bi bi-lightning-charge" aria-hidden="true"></i><span class="dashboard-mode-title">Modo Speedrun</span><span class="dashboard-mode-desc">Verdadeiro ou falso cronometrado</span>
+                  </button>
+                </div>
+
+                <div class="dashboard-dificuldade" data-dashboard-dificuldade>
+                  <p class="dashboard-label" id="dashboard-dificuldade-titulo">Dificuldade</p>
+                  <div class="dashboard-dificuldade-opcoes" role="group" aria-labelledby="dashboard-dificuldade-titulo">
+                    <button type="button" class="dashboard-nivel" aria-pressed="false" data-dashboard-nivel>Fácil</button>
+                    <button type="button" class="dashboard-nivel" aria-pressed="true" data-dashboard-nivel>Médio</button>
+                    <button type="button" class="dashboard-nivel" aria-pressed="false" data-dashboard-nivel>Difícil</button>
+                  </div>
+                </div>
+                <span class="dashboard-start-button" aria-hidden="true">Iniciar sessão de estudo <i class="bi bi-arrow-right"></i></span>
+              </section>
+
+              <div class="dashboard-side-column">
+                <div class="dashboard-stat-grid" data-dashboard-part="stats">
+                  <div class="dashboard-stat dashboard-stat-sessoes"><span><i class="bi bi-calendar-check" aria-hidden="true"></i>Sessões nesta semana</span><strong>4 <small>concl.</small></strong></div>
+                  <div class="dashboard-stat dashboard-stat-acerto"><span><i class="bi bi-bullseye" aria-hidden="true"></i>Taxa de acerto</span><strong>78%</strong></div>
+                  <div class="dashboard-stat dashboard-stat-sequencia"><span><i class="bi bi-fire" aria-hidden="true"></i>Sequência</span><strong>4 dias</strong></div>
+                </div>
+
+                <section class="dashboard-panel dashboard-ranking" data-dashboard-part="ranking" aria-labelledby="dashboard-ranking-titulo">
+                  <h4 id="dashboard-ranking-titulo">Ranking semanal</h4>
+                  <ol>
+                    <li><span class="dashboard-rank-pos">1</span><span class="dashboard-rank-avatar" aria-hidden="true">AL</span><span class="dashboard-rank-nome">Alex</span><span class="dashboard-rank-pts">1.480 pts</span></li>
+                    <li><span class="dashboard-rank-pos">2</span><span class="dashboard-rank-avatar" aria-hidden="true">SA</span><span class="dashboard-rank-nome">Sam</span><span class="dashboard-rank-pts">1.320 pts</span></li>
+                    <li class="is-you"><span class="dashboard-rank-pos">3</span><span class="dashboard-rank-avatar" aria-hidden="true">VC</span><span class="dashboard-rank-nome">Você</span><span class="dashboard-rank-pts">1.240 pts</span></li>
+                  </ol>
+                </section>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

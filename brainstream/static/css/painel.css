@@ -1,0 +1,1134 @@
+/*
+ * Painel do estudante (Figura 8): histórico + perfil à esquerda,
+ * tema em texto livre com sugestões, escolha de modo, indicadores de gamificação e ranking semanal.
+ */
+.painel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+@media (min-width: 992px) {
+  .painel {
+    grid-template-columns: 17.5rem minmax(0, 1fr);
+  }
+}
+
+/* ---------- Coluna lateral ---------- */
+.painel-side {
+  --bs-offcanvas-bg: var(--color-surface);
+  --bs-offcanvas-width: min(20rem, 88vw);
+  --bs-offcanvas-border-color: var(--color-border);
+  background: var(--color-surface);
+  display: flex;
+  flex-direction: column;
+}
+
+/* O Bootstrap foca o painel ao abrir o offcanvas; o foco programático não precisa de anel. */
+.painel-side:focus {
+  outline: none;
+}
+
+@media (min-width: 992px) {
+  .painel-side {
+    border-right: 1px solid var(--color-border);
+    height: 100vh;
+    height: 100svh;
+    position: sticky;
+    top: 0;
+  }
+}
+
+.painel-side-head {
+  align-items: center;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  min-height: 4rem;
+  padding: 0.75rem 1.25rem;
+}
+
+.painel-brand {
+  align-items: center;
+  color: var(--color-ink);
+  display: inline-flex;
+  font-size: 1.0625rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+
+.painel-brand:hover {
+  color: var(--color-ink);
+}
+
+.painel-history {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1.25rem 0.75rem;
+  scrollbar-color: var(--color-surface-3) transparent;
+  scrollbar-width: thin;
+}
+
+.painel-side-title {
+  color: var(--color-muted);
+  font-size: var(--step-xs);
+  font-weight: 600;
+  letter-spacing: 0;
+  margin: 0 0.5rem 0.75rem;
+}
+
+.painel-history-list {
+  display: grid;
+  gap: 0.125rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.painel-history-item {
+  border-radius: var(--radius-sm);
+  display: grid;
+  gap: 0.7rem;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  padding: 0.7rem 0.5rem;
+  transition: background-color var(--t-hover) ease;
+}
+
+.painel-history-item:hover,
+.painel-history-item.is-current {
+  background: var(--color-surface-2);
+}
+
+/* Cada sessão abre a tela do seu modo; o link cobre o item inteiro (stretched-link). */
+.painel-history-item {
+  position: relative;
+}
+
+.painel-history-link {
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.painel-history-link:hover {
+  color: var(--color-ink);
+}
+
+.painel-history-link:focus-visible {
+  outline: none;
+}
+
+.painel-history-link:focus-visible::after {
+  border-radius: var(--radius-sm);
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+.painel-history-item.is-current .painel-history-icon {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-text);
+}
+
+.painel-history-icon {
+  align-items: center;
+  background: var(--color-surface-3);
+  border-radius: var(--radius-sm);
+  color: var(--color-muted);
+  display: inline-flex;
+  font-size: 0.875rem;
+  height: 1.875rem;
+  justify-content: center;
+  width: 1.875rem;
+}
+
+.painel-history-body {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.painel-history-title {
+  font-size: var(--step-small);
+  font-weight: 600;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.painel-history-meta {
+  align-items: center;
+  color: var(--color-muted);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: var(--step-xs);
+  gap: 0.25rem 0.5rem;
+}
+
+.painel-history-meta .chip {
+  font-size: 0.75rem;
+  padding: 0.05rem 0.5rem;
+}
+
+.painel-history-bar {
+  height: 0.25rem;
+  margin-top: 0.15rem;
+}
+
+.painel-history-bar > span {
+  background: var(--color-success);
+}
+
+.painel-empty {
+  color: var(--color-muted);
+  font-size: var(--step-small);
+  margin: 0;
+  padding: 0 0.5rem;
+}
+
+.painel-profile {
+  align-items: center;
+  border-top: 1px solid var(--color-border);
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 0.75rem 0.75rem 0.75rem 0.75rem;
+}
+
+/* Avatar + nome levam a "Meu Perfil"; o botão de sair fica ao lado, fora do link. */
+.painel-profile-link {
+  align-items: center;
+  border-radius: var(--radius-sm);
+  color: var(--color-ink);
+  display: grid;
+  gap: 0.7rem;
+  grid-template-columns: auto minmax(0, 1fr);
+  padding: 0.4rem 0.5rem;
+  text-decoration: none;
+  transition: background-color var(--t-hover) ease;
+}
+
+.painel-profile-link:hover,
+.painel-profile-link[aria-current="page"] {
+  background: var(--color-surface-2);
+  color: var(--color-ink);
+}
+
+.painel-profile-link:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.painel-avatar {
+  align-items: center;
+  background: var(--color-accent-soft);
+  border-radius: 50%;
+  color: var(--color-accent-text);
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: var(--step-xs);
+  font-weight: 700;
+  height: 2.25rem;
+  justify-content: center;
+  width: 2.25rem;
+}
+
+.painel-avatar-foto {
+  object-fit: cover;
+}
+
+.painel-avatar-sm {
+  background: var(--color-surface-3);
+  color: var(--color-ink);
+  font-size: 0.6875rem;
+  height: 2rem;
+  width: 2rem;
+}
+
+.painel-profile-text {
+  display: grid;
+  min-width: 0;
+}
+
+.painel-profile-name {
+  font-size: var(--step-small);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.painel-profile-meta {
+  color: var(--color-muted);
+  font-size: var(--step-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Área principal ---------- */
+.painel-main {
+  display: grid;
+  gap: 1.25rem;
+  align-content: start;
+  margin-inline: auto;
+  max-width: 72rem;
+  min-width: 0;
+  padding: 1.5rem var(--page-margin) 3rem;
+  width: 100%;
+}
+
+.painel-top {
+  align-items: center;
+  display: flex;
+  gap: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.painel-greeting {
+  flex: 1;
+  min-width: 0;
+}
+
+.painel-greeting h1 {
+  font-size: clamp(1.625rem, 1.35rem + 0.9vw, 2rem);
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+}
+
+.painel-greeting p {
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.painel-message {
+  align-items: flex-start;
+  background: var(--color-success-soft);
+  border: 1px solid color-mix(in srgb, var(--color-success) 30%, transparent);
+  border-radius: var(--radius-sm);
+  display: flex;
+  font-size: var(--step-small);
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+}
+
+.painel-message .bi {
+  color: var(--color-success);
+  line-height: 1.55;
+}
+
+.painel-message p {
+  margin: 0;
+}
+
+.painel-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: clamp(1.125rem, 0.9rem + 0.8vw, 1.5rem);
+}
+
+.painel-field {
+  border: 0;
+  margin: 0 0 1.5rem;
+  min-width: 0;
+  padding: 0;
+}
+
+.painel-label {
+  display: block;
+  float: none;
+  font-size: var(--step-small);
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+  width: auto;
+}
+
+.painel-input {
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  min-height: 2.875rem;
+  padding-inline: 0.875rem;
+}
+
+.painel-input::placeholder {
+  color: var(--color-muted);
+  opacity: 1;
+}
+
+.painel-input:-webkit-autofill,
+.painel-input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 100px var(--color-surface) inset;
+  -webkit-text-fill-color: var(--color-ink);
+}
+
+.painel-input.is-invalid,
+.painel-input.is-invalid:focus {
+  background-image: none;
+  border-color: var(--color-danger);
+}
+
+.painel-input.is-invalid:focus {
+  box-shadow: 0 0 0 3px var(--color-danger-soft);
+}
+
+/* Sugestões opcionais: só preenchem o campo, a escolha continua livre. */
+.painel-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.painel-suggestion {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-muted);
+  font-size: var(--step-small);
+  font-weight: 500;
+  line-height: 1.2;
+  padding: 0.45rem 0.85rem;
+  transition: background-color 0.18s ease-out, border-color 0.18s ease-out, color 0.18s ease-out, transform var(--t-press) var(--ease-out);
+}
+
+.painel-suggestion:hover {
+  border-color: var(--color-border-strong);
+  color: var(--color-ink);
+}
+
+.painel-suggestion:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.painel-suggestion[aria-pressed="true"] {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent);
+  color: var(--color-accent-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .painel-suggestion {
+    transition: none;
+  }
+}
+
+.painel-error {
+  color: var(--color-danger);
+  font-size: var(--step-small);
+  margin: 0.5rem 0 0;
+}
+
+/* Cartões de modo: rádios nativos com rótulo clicável. */
+.painel-mode-input {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.painel-mode {
+  -webkit-tap-highlight-color: transparent;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  display: grid;
+  gap: 0.2rem;
+  height: 100%;
+  padding: 1rem 1rem 1.05rem;
+  position: relative;
+  transition: border-color var(--t-hover) ease, background-color var(--t-hover) ease, box-shadow var(--t-hover) ease, transform var(--t-press) var(--ease-out);
+}
+
+.painel-mode:hover {
+  border-color: var(--color-border-strong);
+  background: var(--color-surface-3);
+}
+
+.painel-mode-icon {
+  color: var(--color-muted);
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+  transition: color var(--t-hover) ease;
+}
+
+.painel-mode-title {
+  font-weight: 650;
+}
+
+.painel-mode-desc {
+  color: var(--color-muted);
+  font-size: var(--step-small);
+  line-height: 1.4;
+}
+
+.painel-mode-check {
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: 50%;
+  height: 1rem;
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  transition: border-color var(--t-hover) ease, box-shadow var(--t-hover) ease;
+  width: 1rem;
+}
+
+.painel-mode-input:checked + .painel-mode {
+  background: var(--color-surface-2);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.painel-mode-input:checked + .painel-mode .painel-mode-icon {
+  color: var(--color-accent-text);
+}
+
+.painel-mode-input:checked + .painel-mode .painel-mode-check {
+  border-color: var(--color-accent);
+  box-shadow: inset 0 0 0 3px var(--color-surface-2), inset 0 0 0 8px var(--color-accent);
+}
+
+.painel-mode-input:focus-visible + .painel-mode {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+/* Empilhados no celular, os modos ficam em linha (ícone ao lado do texto). */
+@media (max-width: 767.98px) {
+  .painel-mode {
+    column-gap: 0.875rem;
+    grid-template-columns: auto minmax(0, 1fr);
+    padding: 0.875rem 2.75rem 0.875rem 1rem;
+  }
+
+  .painel-mode-icon {
+    grid-row: 1 / span 2;
+    margin: 0.1rem 0 0;
+  }
+
+  .painel-mode-check {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+.painel-start {
+  width: 100%;
+}
+
+/* ---------- Indicadores ---------- */
+.painel-kpis {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 576px) {
+  .painel-kpis {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.painel-kpi {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  display: grid;
+  gap: 0.2rem;
+  padding: 1rem 1.125rem;
+}
+
+.painel-kpi-label {
+  align-items: center;
+  color: var(--color-muted);
+  display: flex;
+  font-size: var(--step-xs);
+  font-weight: 500;
+  gap: 0.45rem;
+}
+
+.painel-kpi-value {
+  font-size: clamp(1.625rem, 1.4rem + 0.7vw, 2rem);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.painel-kpi-note {
+  color: var(--color-muted);
+  font-size: var(--step-xs);
+}
+
+/* No celular, os três indicadores viram widgets lado a lado: rótulo curto em cima, número grande embaixo. */
+@media (max-width: 575.98px) {
+  .painel-kpis {
+    gap: 0.5rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .painel-kpi {
+    align-content: space-between;
+    border-radius: 1.125rem;
+    gap: 0.6rem;
+    min-height: 6rem;
+    padding: 0.8rem 0.75rem;
+  }
+
+  .painel-kpi-label {
+    align-items: flex-start;
+    flex-direction: column;
+    font-size: 0.6875rem;
+    gap: 0.3rem;
+    line-height: 1.25;
+  }
+
+  .painel-kpi-label .bi {
+    font-size: 0.9375rem;
+  }
+
+  .painel-kpi-value {
+    font-size: 1.625rem;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+
+  /* A nota segue disponível para leitores de tela; na tela, o widget fica limpo. */
+  .painel-kpi-note {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+}
+
+.painel-kpi-info .bi,
+.painel-kpi-info .painel-kpi-value {
+  color: var(--color-info);
+}
+
+.painel-kpi-success .bi,
+.painel-kpi-success .painel-kpi-value {
+  color: var(--color-success);
+}
+
+.painel-kpi-warning .bi,
+.painel-kpi-warning .painel-kpi-value {
+  color: var(--color-warning);
+}
+
+/* ---------- Ranking ---------- */
+.painel-ranking-head {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.875rem;
+  margin-bottom: 0.75rem;
+}
+
+.painel-ranking-head h2 {
+  flex: 1;
+  white-space: nowrap;
+  font-size: 1.0625rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+.painel-ranking-reset {
+  color: var(--color-muted);
+  font-size: var(--step-xs);
+}
+
+.painel-ranking-toggle {
+  font-size: var(--step-xs);
+  gap: 0.35rem;
+  min-height: 2rem;
+  padding-inline: 0.7rem;
+}
+
+.painel-ranking-list {
+  display: grid;
+  gap: 0.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.painel-ranking-row {
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 2.6rem auto minmax(0, 1fr) auto;
+  padding: 0.6rem 0.75rem;
+}
+
+/* Cores do pódio: mais claras no tema escuro, mais fechadas no claro para o número continuar legível. */
+.painel-ranking-list {
+  --podio-ouro: #f5b544;
+  --podio-prata: #94a3b8;
+  --podio-bronze: #d97706;
+}
+
+html[data-theme="light"] .painel-ranking-list {
+  --podio-ouro: #a3620a;
+  --podio-prata: #64748b;
+  --podio-bronze: #b45309;
+}
+
+.painel-ranking-row:nth-child(1) {
+  background: linear-gradient(90deg, rgb(245 181 68 / 18%) 0%, rgb(245 181 68 / 4%) 100%);
+  border-color: rgb(245 181 68 / 35%);
+}
+
+.painel-ranking-row:nth-child(2) {
+  background: linear-gradient(90deg, rgb(148 163 184 / 14%) 0%, transparent 100%);
+  border-color: rgb(148 163 184 / 30%);
+}
+
+.painel-ranking-row:nth-child(3) {
+  background: linear-gradient(90deg, rgb(217 119 6 / 14%) 0%, transparent 100%);
+  border-color: rgb(217 119 6 / 30%);
+}
+
+.painel-ranking-row:nth-child(1) .painel-ranking-pos { color: var(--podio-ouro); }
+.painel-ranking-row:nth-child(2) .painel-ranking-pos { color: var(--podio-prata); }
+.painel-ranking-row:nth-child(3) .painel-ranking-pos { color: var(--podio-bronze); }
+
+/* A linha do estudante logado vence o pódio (vem depois, mesma especificidade). */
+.painel-ranking-row.is-me {
+  background: linear-gradient(90deg, rgba(46, 230, 197, 0.12) 0%, rgba(59, 139, 255, 0.06) 100%);
+  border: 1px solid var(--color-accent);
+  box-shadow: 0 0 16px -4px rgba(46, 230, 197, 0.25);
+}
+
+.painel-ranking-row.is-me .painel-avatar-foto {
+  object-fit: cover;
+}
+
+.painel-avatar-sm {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+
+.painel-ranking-pos {
+  align-items: center;
+  color: var(--color-muted);
+  display: inline-flex;
+  font-size: var(--step-small);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  gap: 0.2rem;
+  justify-content: center;
+}
+
+.painel-ranking-medal {
+  font-size: 1.125rem;
+  line-height: 1;
+}
+
+.painel-ranking-who {
+  display: grid;
+  gap: 0.2rem;
+  justify-items: start;
+  min-width: 0;
+}
+
+.painel-ranking-name {
+  align-items: center;
+  display: flex;
+  font-size: var(--step-small);
+  font-weight: 600;
+  gap: 0.4rem;
+  max-width: 100%;
+}
+
+.painel-ranking-name .chip {
+  font-size: 0.6875rem;
+  padding: 0 0.45rem;
+}
+
+/* Foguinho da sequência: badge arredondada, com a contagem bem legível. */
+.painel-ranking-streak {
+  align-items: center;
+  background: rgb(245 158 11 / 12%);
+  border-radius: 999px;
+  color: var(--color-warning);
+  display: inline-flex;
+  font-size: var(--step-xs);
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  gap: 0.25rem;
+  line-height: 1.2;
+  padding: 0.12rem 0.5rem 0.12rem 0.4rem;
+}
+
+.painel-ranking-streak .bi {
+  color: #f59e0b;
+}
+
+/* Pontos em pill, com troféu. */
+.painel-ranking-points-pill {
+  align-items: center;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-accent-text);
+  display: inline-flex;
+  font-size: var(--step-small);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  gap: 0.3rem;
+  padding: 0.25rem 0.65rem;
+  white-space: nowrap;
+}
+
+.painel-ranking-row.is-me .painel-ranking-points-pill {
+  border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+}
+
+@media (max-width: 575.98px) {
+  .painel-ranking-row {
+    gap: 0.55rem;
+    grid-template-columns: 2.3rem auto minmax(0, 1fr) auto;
+    padding: 0.55rem 0.6rem;
+  }
+
+  .painel-ranking-points-pill {
+    font-size: var(--step-xs);
+    padding: 0.22rem 0.55rem;
+  }
+}
+
+.painel-ranking-gap {
+  color: var(--color-muted);
+  padding-left: 1.4rem;
+}
+
+.painel-ranking .painel-empty {
+  padding: 0.5rem 0 0;
+}
+
+/* ---------- Carregamento ao iniciar ou abrir uma sessão ---------- */
+.painel-start-spinner {
+  --bs-spinner-border-width: 0.15em;
+  height: 1rem;
+  margin-right: 0.6rem;
+  width: 1rem;
+}
+
+/* Travado por estar carregando (não por estar indisponível): mantém o acento. */
+.painel-start[aria-busy="true"]:disabled {
+  --bs-btn-disabled-bg: var(--color-accent);
+  --bs-btn-disabled-border-color: var(--color-accent);
+  --bs-btn-disabled-color: var(--color-accent-ink);
+  cursor: progress;
+  opacity: 0.85;
+}
+
+/* Acima do offcanvas do Bootstrap (1045): cobre a tela inteira e absorve cliques repetidos. */
+.carregando {
+  align-items: center;
+  animation: carregando-entrada 0.25s var(--ease-out);
+  backdrop-filter: blur(6px);
+  background: color-mix(in srgb, var(--color-canvas) 82%, transparent);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 1.5rem;
+  position: fixed;
+  z-index: 1080;
+}
+
+.carregando[hidden] {
+  display: none;
+}
+
+.carregando-cartao {
+  align-items: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-float);
+  display: flex;
+  flex-direction: column;
+  max-width: 24rem;
+  padding: 2rem 1.75rem 1.75rem;
+  text-align: center;
+  width: 100%;
+}
+
+/* A marca do BrainStream pulsa, com um halo no acento. */
+.carregando-marca {
+  align-items: center;
+  animation: carregando-pulso 1.4s var(--ease-in-out) infinite;
+  background: var(--color-accent-soft);
+  border-radius: var(--radius-lg);
+  display: inline-flex;
+  height: 3.5rem;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  width: 3.5rem;
+}
+
+.carregando-marca .brand-mark {
+  border-radius: 0.6rem;
+  height: 2.25rem;
+  margin: 0;
+  width: 2.25rem;
+}
+
+.carregando-marca .brand-mark::after {
+  display: none !important;
+}
+
+.carregando-texto {
+  color: var(--color-ink);
+  font-weight: 600;
+  margin: 0 0 0.35rem;
+  text-wrap: balance;
+}
+
+.carregando-dica {
+  color: var(--color-muted);
+  font-size: var(--step-small);
+  margin: 0;
+}
+
+@keyframes carregando-pulso {
+  0%, 100% { box-shadow: 0 0 0 0 var(--color-accent-soft); transform: scale(1); }
+  50% { box-shadow: 0 0 0 0.6rem transparent; transform: scale(1.06); }
+}
+
+@keyframes carregando-entrada {
+  from { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carregando,
+  .carregando-marca {
+    animation: none;
+  }
+}
+
+/* ---------- Exclusão de sessões no histórico ---------- */
+/* O formulário não ocupa caixa: a lixeira vira a 3ª coluna e a confirmação ocupa a linha de baixo. */
+.painel-history-excluir {
+  display: contents;
+}
+
+.painel-history-delete {
+  align-items: center;
+  align-self: start;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--color-muted);
+  display: inline-flex;
+  height: 1.875rem;
+  justify-content: center;
+  position: relative; /* acima do stretched-link do item */
+  transition: background-color var(--t-hover) ease, color var(--t-hover) ease, opacity var(--t-hover) ease;
+  width: 1.875rem;
+  z-index: 2;
+}
+
+.painel-history-delete:hover,
+.painel-history-delete[aria-expanded="true"] {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.painel-history-delete:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 1px;
+}
+
+/* Com mouse, a lixeira aparece no item em foco ou sob o ponteiro; no toque, fica sempre visível. */
+@media (hover: hover) and (pointer: fine) {
+  .painel-history-delete {
+    opacity: 0;
+  }
+
+  .painel-history-item:hover .painel-history-delete,
+  .painel-history-item:focus-within .painel-history-delete,
+  .painel-history-item.is-confirming .painel-history-delete {
+    opacity: 1;
+  }
+}
+
+.painel-history-confirm {
+  align-items: center;
+  background: var(--color-danger-soft);
+  border: 1px solid color-mix(in srgb, var(--color-danger) 28%, transparent);
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: var(--step-xs);
+  gap: 0.5rem 0.75rem;
+  grid-column: 1 / -1;
+  justify-content: space-between;
+  padding: 0.55rem 0.65rem;
+  position: relative;
+  z-index: 2;
+}
+
+.painel-history-confirm[hidden] {
+  display: none;
+}
+
+.painel-history-confirm-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.painel-history-confirm .btn {
+  font-size: var(--step-xs);
+  min-height: 1.875rem;
+  padding: 0.2rem 0.7rem;
+}
+
+.painel-history-confirm-sim {
+  --bs-btn-bg: var(--color-danger);
+  --bs-btn-border-color: var(--color-danger);
+  /* Texto na cor do fundo da página: contraste AA tanto no vermelho claro (escuro) quanto no escuro (claro). */
+  --bs-btn-color: var(--color-canvas);
+  --bs-btn-hover-bg: color-mix(in srgb, var(--color-danger) 88%, var(--color-ink));
+  --bs-btn-hover-border-color: color-mix(in srgb, var(--color-danger) 88%, var(--color-ink));
+  --bs-btn-hover-color: var(--color-canvas);
+  --bs-btn-active-bg: var(--color-danger);
+  --bs-btn-active-color: var(--color-canvas);
+  --bs-btn-disabled-bg: var(--color-danger);
+  --bs-btn-disabled-border-color: var(--color-danger);
+  --bs-btn-disabled-color: var(--color-canvas);
+  font-weight: 600;
+}
+
+.painel-history-item.is-removing {
+  opacity: 0.55;
+}
+
+/* Avisos flutuantes (telas de estudo): logo abaixo do topo, centralizados sobre a conversa. */
+.painel-toasts {
+  display: grid;
+  gap: 0.5rem;
+  left: 50%;
+  max-width: min(28rem, calc(100vw - 2rem));
+  position: fixed;
+  top: 4.75rem;
+  transform: translateX(-50%);
+  width: 100%;
+  z-index: 1070;
+}
+
+.painel-toast {
+  animation: painel-toast-entrada 0.25s var(--ease-out);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-float);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.painel-toast.is-leaving {
+  opacity: 0;
+  transform: translateY(-0.5rem);
+}
+
+@keyframes painel-toast-entrada {
+  from { opacity: 0; transform: translateY(-0.5rem); }
+}
+
+/* ---------- Régua de dificuldade (Quiz e Speedrun) ---------- */
+.painel-dificuldade {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.875rem;
+}
+
+.painel-dificuldade .painel-label {
+  margin: 0;
+}
+
+.painel-dificuldade-opcoes {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  display: inline-flex;
+  gap: 0.2rem;
+  padding: 0.2rem;
+}
+
+.painel-dificuldade-input {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.painel-dificuldade-opcao {
+  border-radius: 999px;
+  color: var(--color-muted);
+  cursor: pointer;
+  font-size: var(--step-small);
+  font-weight: 500;
+  line-height: 1.2;
+  padding: 0.4rem 0.9rem;
+  transition: background-color var(--t-hover) ease, color var(--t-hover) ease, transform var(--t-press) var(--ease-out);
+}
+
+.painel-dificuldade-opcao:hover {
+  color: var(--color-ink);
+}
+
+.painel-dificuldade-input:checked + .painel-dificuldade-opcao {
+  background: var(--color-accent-soft);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+  color: var(--color-accent-text);
+  font-weight: 600;
+}
+
+.painel-dificuldade-input:focus-visible + .painel-dificuldade-opcao {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* Só faz sentido para Quiz e Speedrun: some quando o Modo Guiado está marcado. */
+.painel-card:has(#modo-guiado:checked) .painel-dificuldade {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .painel-history-delete,
+  .painel-dificuldade-opcao,
+  .painel-toast {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* ---------- Toque: resposta tátil nos controles do painel ---------- */
+.painel-mode:active,
+.painel-suggestion:active,
+.painel-dificuldade-opcao:active {
+  transform: scale(0.98);
+}
+
+.painel-suggestion,
+.painel-dificuldade-opcao {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .painel-mode,
+  .painel-mode:active,
+  .painel-suggestion:active,
+  .painel-dificuldade-opcao:active {
+    transform: none;
+    transition: none;
+  }
+}

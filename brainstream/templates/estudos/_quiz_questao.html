@@ -1,0 +1,33 @@
+<li class="estudo-msg estudo-msg-eneas quiz-questao" id="questao-{{ questao.ordem }}" data-quiz-questao="{{ questao.ordem }}">
+  {% include 'estudos/_avatar_eneas.html' %}
+  <div class="estudo-msg-body quiz-body">
+    <div class="estudo-bubble quiz-card">
+      <h2 class="quiz-numero">Questão {{ questao.ordem }} de {{ total }}</h2>
+      <p class="quiz-enunciado">{{ questao.enunciado }}</p>
+      {% if questao.respondida or not aberta %}
+        <ul class="quiz-options" aria-label="Alternativas">
+          {% for letra, texto in questao.alternativas %}
+            <li class="quiz-option is-locked{% if questao.respondida and letra == questao.correta %} is-correct{% elif letra == questao.resposta %} is-wrong{% endif %}{% if letra == questao.resposta %} is-chosen{% endif %}">
+              <span class="quiz-letter">{{ letra }})</span><span class="quiz-option-text">{{ texto }}</span>
+              {% if questao.respondida and letra == questao.correta %}<i class="bi bi-check-circle-fill" aria-hidden="true"></i><span class="visually-hidden">(correta)</span>{% elif letra == questao.resposta %}<i class="bi bi-x-circle-fill" aria-hidden="true"></i><span class="visually-hidden">(sua resposta)</span>{% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <form method="post" action="{% url 'estudos:modo_quiz' sessao_id=questao.sessao_id %}#questao-{{ questao.ordem }}" data-quiz-form>
+          {% csrf_token %}
+          <input type="hidden" name="questao" value="{{ questao.ordem }}">
+          <fieldset class="quiz-fieldset">
+            <legend class="visually-hidden">Escolha uma alternativa da questão {{ questao.ordem }}</legend>
+            <ul class="quiz-options">
+              {% for letra, texto in questao.alternativas %}
+                <li><button class="quiz-option" type="submit" name="resposta" value="{{ letra }}"><span class="quiz-letter">{{ letra }})</span><span class="quiz-option-text">{{ texto }}</span></button></li>
+              {% endfor %}
+            </ul>
+          </fieldset>
+        </form>
+      {% endif %}
+    </div>
+    <time class="estudo-time" datetime="{{ questao.criada_em|date:'c' }}">{{ questao.criada_em|time:'H:i' }}</time>
+  </div>
+</li>

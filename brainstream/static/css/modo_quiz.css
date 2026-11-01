@@ -1,0 +1,164 @@
+/*
+ * Modo Quiz (Figura 10): cards de questão dentro do balão do Enéas, alternativas A–D,
+ * feedback imediato e card final. Estrutura e balões vêm de estudo.css.
+ */
+.quiz-counter {
+  color: var(--color-muted);
+  flex-shrink: 0;
+  font-size: var(--step-xs);
+  white-space: nowrap;
+}
+
+.quiz-counter strong {
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.quiz-body {
+  width: min(40rem, 85%);
+}
+
+.quiz-card {
+  padding: 1rem 1.05rem 1.05rem;
+}
+
+.quiz-numero {
+  color: var(--color-accent-text);
+  font-size: var(--step-xs);
+  font-weight: 650;
+  letter-spacing: 0;
+  margin: 0 0 0.35rem;
+}
+
+.quiz-enunciado {
+  font-weight: 550;
+  margin-bottom: 0.85rem;
+}
+
+.quiz-fieldset {
+  border: 0;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+}
+
+.quiz-options {
+  display: grid;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.quiz-option {
+  align-items: center;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-ink);
+  display: flex;
+  font-size: 0.9375rem;
+  gap: 0.5rem;
+  line-height: 1.4;
+  min-height: 2.75rem;
+  padding: 0.6rem 0.85rem;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color var(--t-hover) ease, border-color var(--t-hover) ease, box-shadow var(--t-hover) ease, transform var(--t-press) var(--ease-out);
+  width: 100%;
+}
+
+button.quiz-option:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+button.quiz-option:hover {
+  background: var(--color-surface-3);
+  border-color: var(--color-border-strong);
+}
+
+button.quiz-option:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+button.quiz-option:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+
+/* Selecionada (enviando): a borda acende no acento até o veredito chegar. */
+button.quiz-option.is-sending {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft), 0 0 16px -4px var(--color-accent);
+  opacity: 1;
+}
+
+.quiz-letter {
+  color: var(--color-muted);
+  flex-shrink: 0;
+  font-weight: 650;
+}
+
+.quiz-option-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.quiz-option .bi {
+  flex-shrink: 0;
+}
+
+.quiz-option.is-locked {
+  color: var(--color-muted);
+}
+
+.quiz-option.is-correct {
+  background: var(--color-success-soft);
+  border-color: var(--color-success);
+  box-shadow: 0 0 0 3px var(--color-success-soft), 0 0 16px -6px var(--color-success);
+  color: var(--color-ink);
+}
+
+.quiz-option.is-correct .bi,
+.quiz-option.is-correct .quiz-letter {
+  color: var(--color-success);
+}
+
+.quiz-option.is-wrong {
+  background: var(--color-danger-soft);
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 3px var(--color-danger-soft), 0 0 16px -6px var(--color-danger);
+  color: var(--color-ink);
+}
+
+.quiz-option.is-wrong .bi,
+.quiz-option.is-wrong .quiz-letter {
+  color: var(--color-danger);
+}
+
+@media (max-width: 575.98px) {
+  .quiz-body {
+    width: 100%;
+  }
+
+  /* Alvos de toque de 52px: fáceis de acertar com o polegar. */
+  .quiz-option {
+    min-height: 3.25rem;
+    padding-block: 0.75rem;
+  }
+
+  .quiz-counter {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quiz-option {
+    transition: none;
+  }
+
+  button.quiz-option:active:not(:disabled) {
+    transform: none;
+  }
+}

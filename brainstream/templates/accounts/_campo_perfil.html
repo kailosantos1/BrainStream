@@ -1,0 +1,6 @@
+<div class="perfil-field">
+  <label class="painel-label" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+  {{ campo }}
+  {% if campo.errors %}<p class="painel-error" id="{{ campo.id_for_label }}-erro">{{ campo.errors.0 }}</p>{% endif %}
+  {% if ajuda %}<p class="perfil-help">{{ ajuda }}</p>{% endif %}
+</div>

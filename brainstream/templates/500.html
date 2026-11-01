@@ -1,0 +1,54 @@
+{% load static %}<!doctype html>
+{% comment %}
+  Independente de base.html: o Django renderiza o 500 sem request nem context processors,
+  e a falha pode ter vindo do banco. Aqui só há a tag static (lê settings) e links fixos.
+{% endcomment %}
+<html lang="pt-BR" data-theme="dark" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Algo inesperado aconteceu · BrainStream</title>
+  <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+  <script>
+    (function () {
+      try {
+        var theme = localStorage.getItem('brainstream-theme');
+        if (theme === 'light' || theme === 'dark') {
+          document.documentElement.dataset.theme = theme;
+          document.documentElement.dataset.bsTheme = theme;
+        }
+      } catch (error) { /* mantém o tema escuro */ }
+    }());
+  </script>
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap-icons/bootstrap-icons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/erro.css' %}">
+</head>
+<body>
+<div class="erro">
+  <header class="erro-topo">
+    <a class="erro-marca" href="/"><span class="brand-mark" aria-hidden="true"></span>BrainStream</a>
+  </header>
+  <main class="erro-centro" id="conteudo">
+    <div class="erro-cartao">
+      <span class="erro-icone erro-icone-alerta" aria-hidden="true"><i class="bi bi-exclamation-triangle"></i></span>
+      <h1 class="erro-titulo"><span class="erro-titulo-codigo">500</span> · Algo inesperado aconteceu</h1>
+      <div class="erro-fala">
+        <span class="erro-fala-avatar" aria-hidden="true"><img src="{% static 'img/eneas.svg' %}" alt="" width="36" height="36"></span>
+        <blockquote class="erro-fala-balao">
+          <span class="erro-fala-autor">Enéas</span>
+          <p>Tivemos um pequeno contratempo técnico por aqui. O raciocínio continua: tente recarregar a página em instantes.</p>
+        </blockquote>
+      </div>
+      <div class="erro-acoes">
+        {# href vazio recarrega o endereço atual, sem depender de JS. #}
+        <a class="btn btn-primary btn-lg" href=""><i class="bi bi-arrow-clockwise me-2" aria-hidden="true"></i>Recarregar a página</a>
+        <a class="btn btn-ghost btn-lg" href="/">Voltar ao Início</a>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

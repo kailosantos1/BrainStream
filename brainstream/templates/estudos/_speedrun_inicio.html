@@ -1,0 +1,16 @@
+<li class="estudo-final speedrun-inicio" id="speedrun-inicio">
+  <div class="estudo-final-card">
+    <span class="estudo-final-icon" aria-hidden="true"><i class="bi bi-lightning-charge"></i></span>
+    <h2>Pronto para o Speedrun?</h2>
+    <ul class="speedrun-regras">
+      <li><i class="bi bi-list-ol" aria-hidden="true"></i><span><strong>{{ total }} afirmações</strong> sobre {{ sessao.tema.nome }}</span></li>
+      <li><i class="bi bi-stopwatch" aria-hidden="true"></i><span><strong>{{ limite_segundos }} segundos</strong> para cada uma; sem resposta, conta como tempo esgotado</span></li>
+      <li><i class="bi bi-check2-square" aria-hidden="true"></i><span>Responda <strong>Verdadeiro</strong> ou <strong>Falso</strong>; cada acerto vale {{ pontos_por_acerto }} pontos</span></li>
+    </ul>
+    <form method="post" action="{% url 'estudos:modo_speedrun' sessao_id=sessao.pk %}" data-speedrun-iniciar>
+      {% csrf_token %}
+      <input type="hidden" name="acao" value="iniciar">
+      <button class="btn btn-primary btn-lg estudo-final-action speedrun-iniciar" type="submit"><i class="bi bi-play-fill" aria-hidden="true"></i>Iniciar Speedrun</button>
+    </form>
+  </div>
+</li>

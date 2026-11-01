@@ -1,0 +1,9 @@
+<li class="painel-ranking-row{% if linha.eu %} is-me{% endif %}"{% if linha.eu %} aria-current="true"{% endif %} value="{{ linha.posicao }}">
+  <span class="painel-ranking-pos">{% if linha.posicao == 1 %}<span class="painel-ranking-medal" aria-hidden="true">🥇</span>{% elif linha.posicao == 2 %}<span class="painel-ranking-medal" aria-hidden="true">🥈</span>{% elif linha.posicao == 3 %}<span class="painel-ranking-medal" aria-hidden="true">🥉</span>{% endif %}<span class="painel-ranking-num">{{ linha.posicao }}</span></span>
+  <span class="painel-avatar painel-avatar-sm" aria-hidden="true">{{ linha.iniciais }}</span>
+  <span class="painel-ranking-who">
+    <span class="painel-ranking-name">{% if linha.eu %}Você <span class="chip chip-accent">você</span>{% else %}{{ linha.nome }}{% endif %}</span>
+    <span class="painel-ranking-streak"><i class="bi bi-fire" aria-hidden="true"></i>{{ linha.sequencia }} dia{{ linha.sequencia|pluralize }}</span>
+  </span>
+  <span class="painel-ranking-points"><span class="painel-ranking-points-pill"><i class="bi bi-trophy" aria-hidden="true"></i> {{ linha.pontos|floatformat:"0g" }} <span aria-hidden="true">pts</span><span class="visually-hidden">pontos</span></span></span>
+</li>

@@ -1,2 +1,12 @@
 # Compatível com Python 3.9.6 no ambiente atual.
 Django==4.2.30
+python-dotenv==1.2.1
+PyMySQL==1.2.3
+# SDK oficial da Claude API (tutor Enéas); 0.125.0 é a última versão compatível com Python 3.9.
+anthropic==0.125.0
+# SDK oficial do Google Gemini (substitui o descontinuado google-generativeai); 1.47.0 roda no Python 3.9.
+google-genai==1.47.0
+# Fotos de perfil (ImageField): validação, redimensionamento e remoção de EXIF; 11.x é a última com Python 3.9.
+Pillow==11.3.0
+# Cliente HTTP do login com Google (já vinha como dependência dos SDKs de IA; agora é usado diretamente).
+httpx==0.28.1

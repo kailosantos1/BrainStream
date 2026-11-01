@@ -1,0 +1,35 @@
+{% load painel_tags %}
+{% if historico %}
+  <ul class="painel-history-list">
+    {% for sessao in historico %}
+      <li class="painel-history-item{% if sessao == sessao_atual %} is-current{% endif %}">
+        <span class="painel-history-icon" aria-hidden="true"><i class="bi {% if sessao.modo == 'guiado' %}bi-chat-dots{% elif sessao.modo == 'quiz' %}bi-file-earmark-text{% else %}bi-lightning-charge{% endif %}"></i></span>
+        <span class="painel-history-body">
+          <a class="painel-history-title painel-history-link stretched-link" href="{% if sessao.modo == 'guiado' %}{% url 'estudos:modo_guiado' sessao_id=sessao.pk %}{% elif sessao.modo == 'quiz' %}{% url 'estudos:modo_quiz' sessao_id=sessao.pk %}{% else %}{% url 'estudos:modo_speedrun' sessao_id=sessao.pk %}{% endif %}" data-carregando="Abrindo sua sessão…"{% if sessao == sessao_atual %} aria-current="page"{% endif %}>{{ sessao.tema }}</a>
+          <span class="painel-history-meta">
+            {{ sessao.data_inicio|dia_relativo }} · {{ sessao.get_modo_display }}
+            <span class="chip {% if sessao.status == 'concluida' %}chip-success{% elif sessao.status == 'revisar' %}chip-warning{% else %}chip-info{% endif %}">{{ sessao.get_status_display }}</span>
+          </span>
+          {% if sessao.taxa_acerto is not None %}
+            <span class="bar painel-history-bar" role="img" aria-label="{{ sessao.taxa_acerto }}% de acerto"><span style="width: {{ sessao.taxa_acerto }}%"></span></span>
+          {% endif %}
+        </span>
+        {# Sem JS, a lixeira exclui direto; com JS (historico.js), ela abre a confirmação abaixo. #}
+        <form class="painel-history-excluir" method="post" action="{% url 'estudos:excluir_sessao' sessao_id=sessao.pk %}" data-excluir-sessao>
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{% if sessao == sessao_atual %}{% url 'core:painel' %}{% else %}{{ request.get_full_path }}{% endif %}">
+          <button class="painel-history-delete" type="submit" aria-label="Excluir “{{ sessao.tema }}” do histórico" title="Excluir do histórico" data-excluir-botao><i class="bi bi-trash3" aria-hidden="true"></i></button>
+          <div class="painel-history-confirm" id="excluir-sessao-{{ sessao.pk }}" data-excluir-confirmacao hidden>
+            <span>Excluir esta sessão do histórico? Os pontos dela continuam valendo.</span>
+            <span class="painel-history-confirm-actions">
+              <button class="btn painel-history-confirm-sim" type="submit" data-excluir-confirmar>Excluir</button>
+              <button class="btn btn-ghost painel-history-confirm-nao" type="button" data-excluir-cancelar>Cancelar</button>
+            </span>
+          </div>
+        </form>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="painel-empty">Nenhuma sessão ainda. Digite um tema e escolha um modo para começar.</p>
+{% endif %}

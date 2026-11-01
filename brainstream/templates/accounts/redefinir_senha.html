@@ -1,0 +1,19 @@
+{% extends 'accounts/base_auth.html' %}
+{% block title %}Nova senha · BrainStream{% endblock %}
+{% block auth_content %}
+{% if validlink %}
+  <h1 class="auth-title">Crie uma nova senha</h1>
+  <p class="auth-lead">Use pelo menos 8 caracteres, evitando senhas comuns ou só com números.</p>
+  <form class="auth-form" method="post" novalidate data-auth-form>
+    {% csrf_token %}
+    {% include 'accounts/_erros.html' %}
+    {% include 'accounts/_campo.html' with field=form.new_password1 %}
+    {% include 'accounts/_campo.html' with field=form.new_password2 %}
+    <button class="btn btn-primary btn-lg auth-submit" type="submit" data-busy-label="Salvando…">Salvar nova senha</button>
+  </form>
+{% else %}
+  <h1 class="auth-title">Link inválido ou expirado</h1>
+  <p class="auth-lead">Este link de recuperação já foi usado ou expirou. Peça um novo para continuar.</p>
+  <a class="btn btn-primary btn-lg auth-submit" href="{% url 'accounts:recuperar_senha' %}">Pedir novo link</a>
+{% endif %}
+{% endblock %}

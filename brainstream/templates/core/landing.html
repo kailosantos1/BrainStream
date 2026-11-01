@@ -1,8 +1,315 @@
 {% extends 'base.html' %}
-
-{% block title %}BrainStream{% endblock %}
-
-{% block content %}
-  <h1>BrainStream</h1>
-  <p>Uma nova experiência para organizar ideias e conhecimento.</p>
+{% load static %}
+{% block title %}BrainStream · Tutor de estudos com IA{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product-ui.css' %}">
+<link rel="stylesheet" href="{% static 'css/landing.css' %}">
 {% endblock %}
+{% block content %}
+{# Dados ilustrativos compartilhados por todas as interfaces: 12 sessões, 78% de acerto, 4 dias de sequência, 65% da meta semanal. #}
+<section id="inicio" class="story" aria-labelledby="hero-title" data-story>
+  <div class="story-track" data-story-track>
+    <div class="story-stage">
+      <div class="container story-grid">
+        <div class="hero-copy" data-story-copy>
+          <h1 id="hero-title" class="hero-title">Aprenda pensando, não decorando.</h1>
+          <p class="hero-lead">Tutor de estudos com IA que guia seu raciocínio com perguntas.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" href="#pergunte">Experimentar o Enéas</a>
+            <a class="btn btn-ghost btn-lg" href="#como-funciona">Ver como funciona</a>
+          </div>
+        </div>
+
+        <div class="tour" id="como-funciona" data-story-tour>
+          <h2 class="tour-title">Como o Enéas ensina</h2>
+          <ol class="tour-steps">
+            <li><button type="button" class="tour-step" data-tour-step="1" aria-controls="tour-window">
+              <span class="tour-step-title">Você pergunta</span>
+              <span class="tour-step-text">Traga a dúvida do jeito que ela vier, sobre qualquer matéria.</span>
+            </button></li>
+            <li><button type="button" class="tour-step" data-tour-step="2" aria-controls="tour-window">
+              <span class="tour-step-title">O Enéas responde com uma pergunta</span>
+              <span class="tour-step-text">Em vez da resposta pronta, ele aponta o próximo passo do raciocínio.</span>
+            </button></li>
+            <li><button type="button" class="tour-step" data-tour-step="3" aria-controls="tour-window">
+              <span class="tour-step-title">Você raciocina e recebe uma dica</span>
+              <span class="tour-step-text">Se travar, ganha uma dica na medida certa, nunca o gabarito.</span>
+            </button></li>
+            <li><button type="button" class="tour-step" data-tour-step="4" aria-controls="tour-window">
+              <span class="tour-step-title">Seu insight vira progresso</span>
+              <span class="tour-step-text">Cada conceito que você entende entra no seu painel de evolução.</span>
+            </button></li>
+          </ol>
+        </div>
+
+        <div class="story-visual" data-story-visual>
+          <div class="hero-rig" data-hero-rig>
+            <div class="app-window tour-window" id="tour-window" data-ui data-tour-window role="group" aria-label="Demonstração ilustrativa do Enéas no modo Guiado">
+              <div class="app-bar">
+                <span class="app-dots" aria-hidden="true"><span></span><span></span><span></span></span>
+                <span class="app-title">Enéas</span>
+                <span class="app-crumb">Guiado · Física · Luz</span>
+                <span class="app-badge">Dados ilustrativos</span>
+              </div>
+              <div class="app-body app-body-split">
+                <div class="app-main tour-main">
+                  <div class="chat">
+                    <p class="msg msg-user" data-from="1" data-focus="1">Por que o céu é azul?</p>
+                    <div class="msg msg-eneas" data-from="2" data-focus="2">
+                      <span class="estudo-avatar estudo-avatar-eneas" aria-hidden="true"><img src="{% static 'img/eneas.svg' %}" alt="Enéas" width="28" height="28"></span>
+                      <p class="m-0">Boa pergunta. Quando a luz do Sol atravessa o ar, o que acontece com as cores que formam essa luz?</p>
+                    </div>
+                    <p class="msg msg-user" data-from="3" data-focus="3">Será que algumas cores se espalham mais do que outras?</p>
+                    <p class="note-card note-hint" data-from="3" data-focus="3"><strong>Dica do Enéas</strong>Compare o comprimento de onda da luz azul com o da vermelha.</p>
+                    <p class="note-card note-insight" data-from="4" data-focus="4"><strong>Conceito entendido</strong>A luz azul tem onda mais curta e se espalha mais no ar. Por isso o céu parece azul.</p>
+                    <div class="typing" data-typing aria-hidden="true"><span></span><span></span><span></span></div>
+                  </div>
+                  <div class="composer tour-composer" aria-hidden="true">
+                    <span class="composer-text">Responda com o seu raciocínio…</span>
+                    <span class="composer-send"><i class="bi bi-arrow-up"></i></span>
+                  </div>
+                </div>
+                <aside class="app-side tour-side" aria-label="Resumo da sessão">
+                  <div>
+                    <span class="app-label">Sessão de hoje</span>
+                    <strong class="tour-side-topic">Física · Luz</strong>
+                  </div>
+                  <div>
+                    <span class="app-label">Progresso da sessão</span>
+                    <span class="bar session-bar"><span></span></span>
+                  </div>
+                  <div class="app-panel" data-focus="4">
+                    <span class="app-label">Sessões concluídas</span>
+                    <span class="app-metric metric-swap"><span data-until="3">11</span><span data-from="4">12</span></span>
+                  </div>
+                  <div class="app-panel">
+                    <span class="app-label">Sequência de estudo</span>
+                    <span class="app-metric">4 dias</span>
+                  </div>
+                </aside>
+              </div>
+            </div>
+
+            <div class="float-card float-streak" aria-hidden="true">
+              <span class="app-label">Sequência</span>
+              <span class="app-metric">4 dias</span>
+              <span class="week-dots"><span class="is-on"></span><span class="is-on"></span><span class="is-on"></span><span class="is-on"></span><span></span><span></span><span></span></span>
+            </div>
+            <div class="float-card float-accuracy" aria-hidden="true">
+              <svg class="ring" viewBox="0 0 40 40"><circle class="ring-track" cx="20" cy="20" r="16"/><circle class="ring-value" cx="20" cy="20" r="16" pathLength="100" stroke-dasharray="78 100"/></svg>
+              <span><span class="app-label">Taxa de acerto</span><span class="app-metric">78%</span></span>
+            </div>
+            <div class="float-card float-quiz" aria-hidden="true">
+              <span class="app-label">Quiz · Biologia</span>
+              <p class="float-quiz-q">Qual gás as plantas absorvem?</p>
+              <span class="option is-correct"><span class="option-key">B</span>Gás carbônico</span>
+            </div>
+          </div>
+        </div>
+
+        <ul class="proof-band list-unstyled" data-story-proof>
+          <li>Método socrático</li>
+          <li>3 modos de estudo</li>
+          <li>Painel de evolução</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="modos-estudo" class="section modes" aria-labelledby="modes-title">
+  <div class="container">
+    <div class="section-head section-head-center" data-reveal>
+      <h2 id="modes-title">Um modo para cada momento do estudo.</h2>
+      <p>Entenda com calma no Guiado, revise no Quiz e teste a memória no Speedrun.</p>
+    </div>
+    <div class="app-window modes-window" data-ui data-reveal>
+      <div class="app-bar modes-bar">
+        <span class="app-dots" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="app-title">BrainStream</span>
+        <div class="seg modes-tabs" role="tablist" aria-label="Modos de estudo" data-seg>
+          <span class="seg-indicator" aria-hidden="true"></span>
+          <button type="button" class="seg-tab" role="tab" id="tab-guiado" aria-selected="true" aria-controls="modo-guiado" data-seg-tab>Guiado</button>
+          <button type="button" class="seg-tab" role="tab" id="tab-quiz" aria-selected="false" aria-controls="modo-quiz" tabindex="-1" data-seg-tab>Quiz</button>
+          <button type="button" class="seg-tab" role="tab" id="tab-speedrun" aria-selected="false" aria-controls="modo-speedrun" tabindex="-1" data-seg-tab>Speedrun</button>
+        </div>
+        <span class="app-badge">Dados ilustrativos</span>
+      </div>
+
+      <div class="mode-panel" role="tabpanel" id="modo-guiado" aria-labelledby="tab-guiado" tabindex="0" data-seg-panel>
+        <div class="mode-head">
+          <h3 class="mode-name">Guiado</h3>
+          <span class="chip">Biologia · Fotossíntese</span>
+          <span class="chip">Sem cronômetro</span>
+        </div>
+        <div class="chat mode-chat">
+          <p class="msg msg-user">As plantas comem terra?</p>
+          <div class="msg msg-eneas"><span class="estudo-avatar estudo-avatar-eneas" aria-hidden="true"><img src="{% static 'img/eneas.svg' %}" alt="Enéas" width="28" height="28"></span><p class="m-0">Se comessem, a terra do vaso iria diminuindo com o tempo. Ela diminui?</p></div>
+          <p class="msg msg-user">Quase nada. Então o alimento vem de outro lugar?</p>
+          <div class="msg msg-eneas"><span class="estudo-avatar estudo-avatar-eneas" aria-hidden="true"><img src="{% static 'img/eneas.svg' %}" alt="Enéas" width="28" height="28"></span><p class="m-0">Isso. O que a planta recebe do ar e da luz que a terra não dá?</p></div>
+        </div>
+        <div class="composer" aria-hidden="true"><span class="composer-text">Responda com o seu raciocínio…</span><span class="composer-send"><i class="bi bi-arrow-up"></i></span></div>
+      </div>
+
+      <div class="mode-panel" role="tabpanel" id="modo-quiz" aria-labelledby="tab-quiz" tabindex="0" data-seg-panel data-quiz>
+        <div class="mode-head">
+          <h3 class="mode-name">Quiz</h3>
+          <span class="chip">Questão 3 de 5</span>
+          <span class="bar mode-progress quiz-progress" aria-hidden="true"><span></span></span>
+        </div>
+        <p class="mode-question" id="quiz-question">Qual gás as plantas absorvem do ar na fotossíntese?</p>
+        <div class="mode-options" role="group" aria-labelledby="quiz-question">
+          <button type="button" class="option" data-quiz-option><span class="option-key">A</span>Oxigênio</button>
+          <button type="button" class="option" data-quiz-option data-correct><span class="option-key">B</span>Gás carbônico</button>
+          <button type="button" class="option" data-quiz-option><span class="option-key">C</span>Nitrogênio</button>
+          <button type="button" class="option" data-quiz-option><span class="option-key">D</span>Hidrogênio</button>
+        </div>
+        <div class="mode-feedback" aria-live="polite" data-quiz-feedback></div>
+      </div>
+
+      <div class="mode-panel" role="tabpanel" id="modo-speedrun" aria-labelledby="tab-speedrun" tabindex="0" data-seg-panel data-speedrun>
+        <div class="mode-head">
+          <h3 class="mode-name">Speedrun</h3>
+          <span class="chip chip-accent"><i class="bi bi-stopwatch" aria-hidden="true"></i><span class="app-mono" data-speed-clock>0:10</span></span>
+          <span class="chip">Pontos: <span class="app-mono" data-speed-score>0</span></span>
+          <span class="bar mode-progress speed-progress" aria-hidden="true"><span data-speed-bar></span></span>
+        </div>
+        <p class="mode-question" id="speed-statement" data-speed-statement>A Lua tem luz própria.</p>
+        <div class="mode-options mode-options-pair" role="group" aria-labelledby="speed-statement">
+          <button type="button" class="option" data-speed-answer="true"><span class="option-key">V</span>Verdadeiro</button>
+          <button type="button" class="option" data-speed-answer="false"><span class="option-key">F</span>Falso</button>
+        </div>
+        <div class="mode-feedback" aria-live="polite" data-speed-feedback></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% include 'core/dashboard_demo.html' %}
+
+<section id="capacidades" class="section bento-section" aria-labelledby="bento-title">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <h2 id="bento-title">Sinais de que o estudo está funcionando.</h2>
+      <p>O BrainStream registra o que você estudou e mostra o seu ritmo, sem planilhas.</p>
+    </div>
+    <div class="bento">
+      <article class="bento-tile bento-history" data-reveal>
+        <h3>Histórico de sessões</h3>
+        <p>Cada sessão fica registrada com matéria e modo.</p>
+        <ol class="history app-window" data-ui aria-label="Histórico ilustrativo">
+          <li><span class="history-topic">Física · Luz</span><span class="chip">Guiado</span><span class="history-when">Hoje</span></li>
+          <li><span class="history-topic">Biologia · Fotossíntese</span><span class="chip">Quiz</span><span class="history-when">Ontem</span></li>
+          <li><span class="history-topic">História · Revolução Francesa</span><span class="chip">Guiado</span><span class="history-when">Há 2 dias</span></li>
+          <li><span class="history-topic">Revisão geral</span><span class="chip">Speedrun</span><span class="history-when">Há 3 dias</span></li>
+        </ol>
+        <p class="history-total"><span class="chip chip-accent">Esta semana: 4 sessões</span><span><strong>12</strong> sessões concluídas no total</span></p>
+      </article>
+      <article class="bento-tile bento-streak" data-reveal>
+        <h3>Sequência de estudo</h3>
+        <p><span class="bento-big" data-count="4">4</span> dias seguidos</p>
+        <div class="week" role="img" aria-label="Quatro dias estudados nesta semana">
+          <span class="is-on">S</span><span class="is-on">T</span><span class="is-on">Q</span><span class="is-on">Q</span><span>S</span><span>S</span><span>D</span>
+        </div>
+      </article>
+      <article class="bento-tile bento-ranking" data-reveal>
+        <h3>Ranking semanal</h3>
+        <ol class="ranking">
+          <li><span>1º</span>Alex</li>
+          <li><span>2º</span>Sam</li>
+          <li class="is-you"><span>3º</span>Você</li>
+        </ol>
+      </article>
+      <article class="bento-tile bento-rhythm" data-reveal>
+        <h3>Ritmo semanal</h3>
+        <p>Tempo de estudo por dia, em relação à sua meta.</p>
+        <div class="rhythm" role="img" aria-label="Segunda 34%, terça 56%, quarta 43%, quinta 78%, sexta 65% da meta diária.">
+          <span class="rhythm-bar rhythm-1"><small>Seg</small></span>
+          <span class="rhythm-bar rhythm-2"><small>Ter</small></span>
+          <span class="rhythm-bar rhythm-3"><small>Qua</small></span>
+          <span class="rhythm-bar rhythm-4"><small>Qui</small></span>
+          <span class="rhythm-bar rhythm-5"><small>Sex</small></span>
+        </div>
+      </article>
+      <article class="bento-tile bento-progress" data-reveal>
+        <h3>Evolução</h3>
+        <div class="progress-row">
+          <svg class="ring ring-lg" viewBox="0 0 40 40" aria-hidden="true"><circle class="ring-track" cx="20" cy="20" r="16"/><circle class="ring-value" cx="20" cy="20" r="16" pathLength="100" stroke-dasharray="65 100"/></svg>
+          <p><span class="bento-big" data-count="65" data-suffix="%">65%</span> da meta semanal</p>
+        </div>
+        <div>
+          <span class="app-label">Taxa de acerto: <b data-count="78" data-suffix="%">78%</b></span>
+          <span class="bar accuracy-bar"><span></span></span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="pergunte" class="section ask" aria-labelledby="ask-title">
+  <div class="container ask-grid">
+    <div class="ask-copy" data-reveal>
+      <h2 id="ask-title">Pergunte ao Enéas.</h2>
+      <p>Escreva uma dúvida e veja o tipo de resposta que ele dá: sempre uma pergunta que faz você avançar.</p>
+      <p class="ask-examples-title" id="ask-examples-title">Experimente</p>
+      <ul class="ask-examples list-unstyled" aria-labelledby="ask-examples-title">
+        <li><button type="button" class="ask-example" data-ask-example="Como funciona a fotossíntese?">Como funciona a fotossíntese?</button></li>
+        <li><button type="button" class="ask-example" data-ask-example="O que causou a Revolução Francesa?">O que causou a Revolução Francesa?</button></li>
+        <li><button type="button" class="ask-example" data-ask-example="Quanto é 7 × 8?">Quanto é 7 × 8?</button></li>
+      </ul>
+    </div>
+    <div class="app-window ask-window" data-ui data-reveal>
+      <div class="app-bar">
+        <span class="app-dots" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="app-title">Enéas</span>
+        <span class="app-crumb">Nova conversa</span>
+        <span class="app-badge">Demonstração</span>
+      </div>
+      <div class="app-main ask-main">
+        <div class="chat ask-chat">
+          <p class="msg msg-user" data-ask-question>Por que o céu é azul?</p>
+          <div class="msg msg-eneas" data-ask-answer><span class="estudo-avatar estudo-avatar-eneas" aria-hidden="true"><img src="{% static 'img/eneas.svg' %}" alt="Enéas" width="28" height="28"></span><p class="m-0" aria-live="polite" data-ask-reply>Boa pergunta. Quando a luz do Sol atravessa o ar, o que você acha que acontece com as cores que formam essa luz?</p></div>
+          <div class="typing" data-ask-typing aria-hidden="true"><span></span><span></span><span></span></div>
+        </div>
+        <form class="composer ask-composer" data-ask-form>
+          <label class="visually-hidden" for="ask-input">Sua pergunta para o Enéas</label>
+          <input id="ask-input" class="ask-input" type="text" maxlength="80" autocomplete="off" placeholder="Escreva sua pergunta…" aria-describedby="ask-note" data-ask-input>
+          <button type="submit" class="composer-send" aria-label="Enviar pergunta"><i class="bi bi-arrow-up" aria-hidden="true"></i></button>
+        </form>
+        <p id="ask-note" class="ask-note">Demonstração com respostas pré-escritas. No produto, o Enéas conversa com IA.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="comecar" class="closing" aria-labelledby="closing-title">
+  <div class="container closing-inner">
+    <h2 id="closing-title" data-reveal>Seu próximo insight começa com uma pergunta.</h2>
+    <p data-reveal>Crie sua conta gratuita e comece a estudar com o Enéas.</p>
+    <div class="closing-actions" data-reveal>
+      {% if user.is_authenticated %}
+        <a class="btn btn-primary btn-lg" href="{% url 'core:painel' %}">Ir para o painel</a>
+      {% else %}
+        <a class="btn btn-primary btn-lg" href="{% url 'accounts:cadastro' %}">Criar conta gratuita</a>
+        <a class="btn btn-ghost btn-lg" href="{% url 'accounts:login' %}">Já tenho conta</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="closing-visual" aria-hidden="true">
+    <div class="app-window closing-window" data-ui>
+      <div class="app-bar">
+        <span class="app-dots"><span></span><span></span><span></span></span>
+        <span class="app-title">BrainStream</span>
+        <span class="app-crumb">Visão geral</span>
+      </div>
+      <div class="app-main closing-stats">
+        <div class="app-panel"><span class="app-label">Sessões concluídas</span><span class="app-metric">12</span></div>
+        <div class="app-panel"><span class="app-label">Taxa de acerto</span><span class="app-metric">78%</span></div>
+        <div class="app-panel"><span class="app-label">Sequência</span><span class="app-metric">4 dias</span></div>
+        <div class="app-panel"><span class="app-label">Progresso semanal</span><span class="app-metric">65%</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}<script src="{% static 'js/landing.js' %}"></script>{% endblock %}

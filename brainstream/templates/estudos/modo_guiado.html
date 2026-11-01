@@ -1,0 +1,64 @@
+{% extends 'estudos/base_estudo.html' %}
+{% load static %}
+{% block title %}{{ sessao.tema.nome }} · Modo Guiado · BrainStream{% endblock %}
+{% block icone %}bi-chat-dots{% endblock %}
+{% block chips %}
+  <span class="chip chip-accent">Modo Guiado</span>
+  {% if sessao.status == 'concluida' %}<span class="chip chip-success" data-estudo-concluido><i class="bi bi-check2-circle" aria-hidden="true"></i>Concluído</span>{% endif %}
+  {% if simulacao %}<span class="chip" title="Sem AI_API_KEY: respostas simuladas para desenvolvimento">Tutor simulado</span>{% endif %}
+{% endblock %}
+{% block top_meta %}
+  {% if sessao.status == 'em_andamento' %}
+    <form class="estudo-concluir-form" method="post" action="{% url 'estudos:modo_guiado' sessao_id=sessao.pk %}" data-concluir-form>
+      {% csrf_token %}
+      <input type="hidden" name="acao" value="concluir">
+      <button class="btn btn-primary estudo-concluir" type="submit" aria-label="Concluir estudo" title="Pedir a síntese final ao Enéas e concluir a sessão">
+        <i class="bi bi-check2-circle" aria-hidden="true"></i><span class="estudo-concluir-texto">Concluir Estudo</span>
+      </button>
+    </form>
+  {% endif %}
+{% endblock %}
+{% block conteudo %}
+    <div class="estudo-scroll" data-estudo-scroll>
+      <ol class="estudo-feed" aria-label="Conversa com o Enéas" aria-live="polite" data-estudo-feed>
+        {% for mensagem in mensagens %}
+          {% include 'estudos/_mensagem.html' %}
+        {% endfor %}
+      </ol>
+    </div>
+
+    <div class="estudo-composer-wrap">
+      {% if sessao.status == 'em_andamento' %}
+        <form class="estudo-composer{% if erro %} is-invalid{% endif %}" method="post" action="{% url 'estudos:modo_guiado' sessao_id=sessao.pk %}" novalidate data-estudo-form>
+          {% csrf_token %}
+          <label class="visually-hidden" for="id_conteudo">Sua resposta</label>
+          <textarea class="estudo-input" name="conteudo" id="id_conteudo" rows="1" maxlength="1500" placeholder="Digite sua resposta..." required aria-describedby="estudo-ajuda{% if erro %} estudo-erro{% endif %}"{% if erro %} aria-invalid="true"{% endif %}>{{ form.conteudo.value|default_if_none:'' }}</textarea>
+          <button class="btn btn-primary estudo-send" type="submit" aria-label="Enviar resposta"><i class="bi bi-arrow-up" aria-hidden="true"></i></button>
+        </form>
+        <p class="estudo-error" id="estudo-erro" role="alert" data-estudo-erro{% if not erro %} hidden{% endif %}>{{ erro }}</p>
+        <p class="estudo-hint" id="estudo-ajuda" data-estudo-ajuda>O Enéas responde com perguntas para você construir o raciocínio.</p>
+      {% elif sessao.status == 'concluida' %}
+        {% include 'estudos/_guiado_encerrado.html' %}
+      {% else %}
+        <p class="estudo-closed">Esta sessão foi encerrada. <a href="{% url 'core:painel' %}">Inicie uma nova pelo painel.</a></p>
+      {% endif %}
+    </div>
+{% endblock %}
+{% block modelos %}
+<template id="estudo-modelo-concluido"><span class="chip chip-success" data-estudo-concluido><i class="bi bi-check2-circle" aria-hidden="true"></i>Concluído</span></template>
+<template id="estudo-modelo-estudante">
+  <li class="estudo-msg estudo-msg-estudante is-pending">
+    <span class="estudo-avatar estudo-avatar-estudante" aria-hidden="true">{{ iniciais }}</span>
+    <div class="estudo-msg-body"><div class="estudo-bubble"><p data-texto></p></div></div>
+  </li>
+</template>
+<template id="estudo-modelo-digitando">
+  <li class="estudo-msg estudo-msg-eneas estudo-typing">
+    {% include 'estudos/_avatar_eneas.html' %}
+    <div class="estudo-msg-body">
+      <div class="estudo-bubble estudo-pensando" role="status"><span class="estudo-dots" aria-hidden="true"><span></span><span></span><span></span></span><span class="visually-hidden">Enéas digitando…</span></div>
+    </div>
+  </li>
+</template>
+{% endblock %}
+{% block estudo_js %}<script src="{% static 'js/modo_guiado.js' %}"></script>{% endblock %}

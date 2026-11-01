@@ -1,0 +1,510 @@
+/*
+ * Sistema visual das interfaces do BrainStream.
+ * Uma única janela (.app-window) e primitivas compartilhadas por hero, tour,
+ * modos, painel, demo e CTA. Somente tokens de base.css; nenhuma cor solta.
+ */
+
+.app-window {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-window);
+  color: var(--color-ink);
+  font-size: var(--step-small);
+  line-height: 1.45;
+  overflow: hidden;
+  position: relative;
+  text-align: left;
+}
+
+.app-bar {
+  align-items: center;
+  background: var(--color-surface-2);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  gap: 0.75rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 1rem;
+}
+
+.app-dots {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 0.35rem;
+}
+
+.app-dots span {
+  background: var(--color-surface-3);
+  border-radius: 50%;
+  height: 0.55rem;
+  width: 0.55rem;
+}
+
+.app-title {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.app-crumb {
+  color: var(--color-muted);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-badge {
+  border: 1px solid var(--color-border-strong);
+  border-radius: 999px;
+  color: var(--color-muted);
+  flex-shrink: 0;
+  font-size: var(--step-xs);
+  margin-left: auto;
+  padding: 0.1rem 0.6rem;
+  white-space: nowrap;
+}
+
+.app-body {
+  display: grid;
+  min-height: 0;
+}
+
+.app-body-split {
+  grid-template-columns: minmax(0, 1fr) 15rem;
+}
+
+.app-main {
+  min-width: 0;
+  padding: 1.25rem;
+}
+
+.app-side {
+  background: var(--color-surface);
+  border-left: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem;
+}
+
+.app-panel {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.875rem;
+}
+
+.app-label {
+  color: var(--color-muted);
+  display: block;
+  font-size: var(--step-xs);
+}
+
+.app-metric {
+  display: block;
+  font-size: 1.375rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.app-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Conversa ---------- */
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.msg {
+  border-radius: 0.875rem;
+  margin: 0;
+  max-width: 88%;
+  padding: 0.65rem 0.9rem;
+}
+
+.msg-user {
+  align-self: flex-end;
+  background: var(--color-surface-3);
+  border-bottom-right-radius: 0.25rem;
+}
+
+.msg-eneas {
+  align-items: flex-start;
+  align-self: flex-start;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-bottom-left-radius: 0.25rem;
+  display: flex;
+  gap: 0.65rem;
+}
+
+.avatar {
+  align-items: center;
+  background: var(--color-accent-soft);
+  border-radius: 50%;
+  color: var(--color-accent-text);
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  height: 1.5rem;
+  justify-content: center;
+  width: 1.5rem;
+}
+
+/* Avatar vetorial do Enéas (static/img/eneas.svg) nas janelas ilustrativas, no lugar do "E". */
+.msg > .estudo-avatar-eneas {
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--color-border-strong);
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 1.75rem;
+  overflow: hidden;
+  width: 1.75rem;
+}
+
+.msg > .estudo-avatar-eneas img {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.note-card {
+  align-self: stretch;
+  border-radius: var(--radius);
+  margin: 0;
+  padding: 0.7rem 0.9rem;
+}
+
+.note-card strong {
+  display: block;
+  font-size: var(--step-xs);
+  font-weight: 650;
+  margin-bottom: 0.15rem;
+}
+
+.note-hint {
+  background: var(--color-info-soft);
+}
+
+.note-hint strong {
+  color: var(--color-info);
+}
+
+.note-insight {
+  background: var(--color-success-soft);
+}
+
+.note-insight strong {
+  color: var(--color-success);
+}
+
+.typing {
+  align-items: center;
+  align-self: flex-start;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: 0.875rem;
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.7rem 0.9rem;
+}
+
+.typing span {
+  background: var(--color-muted);
+  border-radius: 50%;
+  height: 0.4rem;
+  width: 0.4rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .typing span {
+    animation: typing-dot 1s var(--ease-in-out) infinite;
+  }
+
+  .typing span:nth-child(2) { animation-delay: 150ms; }
+  .typing span:nth-child(3) { animation-delay: 300ms; }
+}
+
+@keyframes typing-dot {
+  0%, 60%, 100% { opacity: 0.35; transform: none; }
+  30% { opacity: 1; transform: translateY(-3px); }
+}
+
+.composer {
+  align-items: center;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius);
+  color: var(--color-muted);
+  display: flex;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.3rem 0.3rem 0.3rem 0.9rem;
+}
+
+.composer-text {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.composer-send {
+  align-items: center;
+  background: var(--color-accent);
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--color-accent-ink);
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 2.1rem;
+  justify-content: center;
+  transition: transform var(--t-press) var(--ease-out), background-color var(--t-hover) ease;
+  width: 2.1rem;
+}
+
+.composer-send:active {
+  transform: scale(0.94);
+}
+
+/* ---------- Peças pequenas ---------- */
+.chip {
+  align-items: center;
+  background: var(--color-surface-3);
+  border-radius: 999px;
+  color: var(--color-muted);
+  display: inline-flex;
+  font-size: var(--step-xs);
+  gap: 0.35rem;
+  padding: 0.15rem 0.6rem;
+  white-space: nowrap;
+}
+
+.chip-accent {
+  background: var(--color-accent-soft);
+  color: var(--color-accent-text);
+}
+
+.chip-success {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.chip-warning {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+.chip-info {
+  background: var(--color-info-soft);
+  color: var(--color-info);
+}
+
+.bar {
+  background: var(--color-surface-3);
+  border-radius: 999px;
+  display: block;
+  height: 0.375rem;
+  overflow: hidden;
+}
+
+.bar > span {
+  background: var(--color-accent);
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+  transform: scaleX(var(--value, 1));
+  transform-origin: left;
+  transition: transform 600ms var(--ease-out);
+}
+
+.week-dots {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.week-dots span {
+  background: var(--color-surface-3);
+  border-radius: 0.3rem;
+  flex: 1;
+  height: 0.5rem;
+}
+
+.week-dots span.is-on {
+  background: var(--color-accent);
+}
+
+.ring {
+  display: block;
+  height: 3.25rem;
+  transform: rotate(-90deg);
+  width: 3.25rem;
+}
+
+.ring circle {
+  fill: none;
+  stroke-width: 6;
+}
+
+.ring .ring-track {
+  stroke: var(--color-surface-3);
+}
+
+.ring .ring-value {
+  stroke: var(--color-accent);
+  stroke-linecap: round;
+}
+
+/* ---------- Alternativas (Quiz / Speedrun) ---------- */
+.option {
+  align-items: center;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--color-ink);
+  display: flex;
+  gap: 0.65rem;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.8rem;
+  text-align: left;
+  transition: border-color var(--t-hover) ease, background-color var(--t-hover) ease, transform var(--t-press) var(--ease-out);
+  width: 100%;
+}
+
+.option:active {
+  transform: scale(0.99);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .option:hover:not(:disabled) {
+    border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+  }
+}
+
+.option-key {
+  align-items: center;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0.3rem;
+  color: var(--color-muted);
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: var(--step-xs);
+  font-weight: 600;
+  height: 1.4rem;
+  justify-content: center;
+  width: 1.4rem;
+}
+
+.option.is-correct {
+  background: var(--color-success-soft);
+  border-color: var(--color-success);
+}
+
+.option.is-correct .option-key {
+  background: var(--color-success);
+  border-color: var(--color-success);
+  color: var(--color-canvas);
+}
+
+.option.is-wrong {
+  background: var(--color-warning-soft);
+  border-color: var(--color-warning);
+}
+
+.option.is-wrong .option-key {
+  background: var(--color-warning);
+  border-color: var(--color-warning);
+  color: var(--color-canvas);
+}
+
+.option:disabled {
+  cursor: default;
+}
+
+.feedback {
+  border-radius: var(--radius-sm);
+  margin: 0;
+  padding: 0.6rem 0.8rem;
+}
+
+.feedback-success {
+  background: var(--color-success-soft);
+  color: var(--color-ink);
+}
+
+.feedback-warning {
+  background: var(--color-warning-soft);
+  color: var(--color-ink);
+}
+
+.feedback b {
+  font-weight: 650;
+}
+
+.feedback-success b { color: var(--color-success); }
+.feedback-warning b { color: var(--color-warning); }
+
+/* ---------- Abas do produto com indicador deslizante ---------- */
+.seg {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  padding: 0.2rem;
+  position: relative;
+}
+
+.seg-tab {
+  background: transparent;
+  border: 0;
+  border-radius: 0.375rem;
+  color: var(--color-muted);
+  font-size: var(--step-small);
+  font-weight: 600;
+  min-height: 2.25rem;
+  padding: 0.35rem 1rem;
+  position: relative;
+  transition: color var(--t-hover) ease;
+  z-index: 1;
+}
+
+.seg-tab:hover,
+.seg-tab[aria-selected="true"] {
+  color: var(--color-ink);
+}
+
+.seg-indicator {
+  background: var(--color-surface-3);
+  border-radius: 0.375rem;
+  bottom: 0.2rem;
+  box-shadow: 0 1px 0 0 var(--color-highlight) inset;
+  left: 0;
+  position: absolute;
+  top: 0.2rem;
+  transform: translateX(var(--seg-x, 0));
+  transition: transform 320ms var(--ease-out), width 320ms var(--ease-out);
+  width: var(--seg-w, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar > span,
+  .seg-indicator {
+    transition: none;
+  }
+}
+
+/* Em telas estreitas a barra quebra linha: o selo de dados ilustrativos nunca é cortado. */
+@media (max-width: 575.98px) {
+  .app-bar {
+    flex-wrap: wrap;
+    row-gap: 0.35rem;
+  }
+}

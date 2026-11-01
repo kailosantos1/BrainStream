@@ -1,0 +1,371 @@
+/*
+ * Cadastro, login e recuperação de senha (Figuras 6 e 7).
+ * Coluna lateral com a frase e um histórico ilustrativo; formulário centrado à direita.
+ */
+.auth {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+/* ---------- Coluna lateral ---------- */
+.auth-aside {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .auth {
+    grid-template-columns: clamp(22rem, 31vw, 29rem) minmax(0, 1fr);
+  }
+
+  .auth-aside {
+    background: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    justify-content: space-between;
+    padding: 2.25rem clamp(2rem, 1rem + 2vw, 3rem) 2.5rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+  }
+
+  .auth-brand-compact {
+    visibility: hidden;
+  }
+}
+
+.auth-brand {
+  align-items: center;
+  align-self: flex-start;
+  color: var(--color-ink);
+  display: inline-flex;
+  font-size: 1.0625rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+
+.auth-brand:hover {
+  color: var(--color-ink);
+}
+
+.auth-quote {
+  margin: 0;
+}
+
+.auth-quote blockquote {
+  margin: 0 0 1rem;
+}
+
+.auth-quote p {
+  font-size: clamp(1.375rem, 1.1rem + 0.6vw, 1.625rem);
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+  margin: 0;
+  max-width: 21ch;
+  text-wrap: balance;
+}
+
+.auth-quote figcaption {
+  color: var(--color-muted);
+  font-size: var(--step-small);
+  text-wrap: balance;
+}
+
+.auth-quote figcaption::before {
+  content: "— ";
+}
+
+.auth-sessions {
+  display: grid;
+  gap: 0.625rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.auth-session {
+  align-items: center;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  padding: 0.75rem 0.875rem;
+}
+
+.auth-session-icon {
+  align-items: center;
+  background: var(--color-surface-3);
+  border-radius: var(--radius-sm);
+  color: var(--color-muted);
+  display: inline-flex;
+  font-size: 0.9375rem;
+  height: 2rem;
+  justify-content: center;
+  width: 2rem;
+}
+
+.auth-session-text {
+  display: grid;
+  min-width: 0;
+}
+
+.auth-session-title {
+  font-size: var(--step-small);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.auth-session-meta,
+.auth-note {
+  color: var(--color-muted);
+  font-size: var(--step-xs);
+}
+
+.auth-note {
+  margin: 0.75rem 0 0;
+}
+
+/* ---------- Formulário ---------- */
+.auth-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 1.25rem var(--page-margin) 2.5rem;
+}
+
+.auth-topbar {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.auth-panel {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  padding-block: clamp(2.5rem, 1rem + 6vh, 5rem);
+}
+
+.auth-card {
+  width: min(100%, 24.5rem);
+}
+
+.auth-title {
+  font-size: clamp(1.75rem, 1.5rem + 0.8vw, 2.125rem);
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+
+.auth-lead {
+  color: var(--color-muted);
+  font-size: 1rem;
+  margin: 0 0 1.75rem;
+}
+
+.auth-google {
+  align-items: center;
+  display: flex;
+  font-weight: 600;
+  gap: 0.6rem;
+  justify-content: center;
+  min-height: 2.875rem;
+  width: 100%;
+}
+
+.auth-google:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.auth-google-mark {
+  height: 1.05rem;
+  width: 1.05rem;
+}
+
+.auth-divider {
+  align-items: center;
+  color: var(--color-muted);
+  display: flex;
+  font-size: var(--step-xs);
+  gap: 0.875rem;
+  margin: 1.5rem 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  border-top: 1px solid var(--color-border-strong);
+  content: "";
+  flex: 1;
+}
+
+.auth-form {
+  display: grid;
+  gap: 1.125rem;
+}
+
+.auth-label-row {
+  align-items: baseline;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+.auth-field .form-label {
+  font-size: var(--step-small);
+  font-weight: 600;
+  margin: 0;
+}
+
+.auth-input {
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  min-height: 2.875rem;
+  padding-inline: 0.875rem;
+}
+
+.auth-input::placeholder {
+  color: var(--color-muted);
+  opacity: 1;
+}
+
+/* O preenchimento automático do navegador acompanha o tema em vez do amarelo padrão. */
+.auth-input:-webkit-autofill,
+.auth-input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 100px var(--color-surface) inset;
+  -webkit-text-fill-color: var(--color-ink);
+  caret-color: var(--color-ink);
+}
+
+.auth-input.is-invalid,
+.auth-input.is-invalid:focus {
+  background-image: none;
+  border-color: var(--color-danger);
+}
+
+.auth-input.is-invalid:focus {
+  box-shadow: 0 0 0 3px var(--color-danger-soft);
+}
+
+.auth-field .invalid-feedback {
+  color: var(--color-danger);
+  font-size: var(--step-small);
+  margin-top: 0.4rem;
+}
+
+.auth-field .invalid-feedback p {
+  margin: 0;
+}
+
+.auth-password {
+  position: relative;
+}
+
+.auth-password .auth-input {
+  padding-right: 3rem;
+}
+
+.auth-reveal {
+  align-items: center;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--color-muted);
+  display: inline-flex;
+  height: 2.25rem;
+  justify-content: center;
+  position: absolute;
+  right: 0.3rem;
+  top: 0.3rem;
+  transition: color var(--t-hover) ease, background-color var(--t-hover) ease;
+  width: 2.25rem;
+}
+
+.auth-reveal:hover {
+  background: var(--color-surface-2);
+  color: var(--color-ink);
+}
+
+.auth-alert {
+  background: var(--color-danger-soft);
+  border: 1px solid color-mix(in srgb, var(--color-danger) 35%, transparent);
+  border-radius: var(--radius-sm);
+  color: var(--color-ink);
+  display: flex;
+  font-size: var(--step-small);
+  gap: 0.6rem;
+  padding: 0.75rem 0.875rem;
+}
+
+.auth-alert .bi {
+  color: var(--color-danger);
+  line-height: 1.55;
+}
+
+/* Avisos que não são erro (ex.: login com Google não configurado ou cancelado). */
+.auth-alert.is-info {
+  background: var(--color-info-soft);
+  border-color: color-mix(in srgb, var(--color-info) 35%, transparent);
+}
+
+.auth-alert.is-info .bi {
+  color: var(--color-info);
+}
+
+.auth-alert + .auth-alert {
+  margin-top: 0.75rem;
+}
+
+/* Mensagens do sistema (messages) ficam acima do título do formulário. */
+.auth-mensagem:last-of-type {
+  margin-bottom: 1.5rem;
+}
+
+.auth-alert p {
+  margin: 0;
+}
+
+.auth-submit {
+  margin-top: 0.375rem;
+  width: 100%;
+}
+
+.auth-submit .spinner-border {
+  --bs-spinner-border-width: 0.15em;
+  height: 1rem;
+  width: 1rem;
+}
+
+.auth-link {
+  color: var(--color-accent-text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-link:hover,
+.auth-link:focus-visible {
+  color: var(--color-accent-text);
+  text-decoration: underline;
+}
+
+.auth-forgot {
+  font-size: var(--step-small);
+}
+
+.auth-switch {
+  color: var(--color-muted);
+  font-size: var(--step-small);
+  margin: 1.5rem 0 0;
+  text-align: center;
+}

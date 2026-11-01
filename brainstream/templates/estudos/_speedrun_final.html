@@ -1,0 +1,14 @@
+<li class="estudo-final" id="estudo-final">
+  <div class="estudo-final-card" role="status">
+    <span class="estudo-final-icon" aria-hidden="true"><i class="bi bi-lightning-charge"></i></span>
+    <h2>Parabéns, você concluiu o speedrun!</h2>
+    <p class="estudo-final-score">Você acertou <strong>{{ sessao.acertos }} de {{ sessao.total_questoes }}</strong> afirmações e ganhou <strong>{{ sessao.pontuacao }} pontos</strong>.</p>
+    <p class="estudo-final-score">Tempo total: <strong>{{ tempo_total|floatformat:1 }} s</strong></p>
+    <p class="estudo-final-note">
+      {% if sessao.taxa_acerto >= 80 %}Rápido e preciso em {{ sessao.tema.nome }}. Seus pontos já contam no ranking semanal.
+      {% elif sessao.taxa_acerto >= 60 %}Bom ritmo. Leia as justificativas das que errou para fixar o tema.
+      {% else %}Vale revisitar {{ sessao.tema.nome }} no Modo Guiado e depois tentar outro speedrun.{% endif %}
+    </p>
+    <a class="btn btn-primary estudo-final-action" href="{% url 'core:painel' %}">Voltar ao Painel <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+  </div>
+</li>

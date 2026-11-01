@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static painel_tags %}
+{% comment %}
+  Estrutura comum das telas de estudo (Figuras 9 e 10): lateral recolhível com "Voltar ao Painel" e
+  histórico, topo com tema, chips do modo e pontos, e área rolável. Cada modo preenche os blocos abaixo.
+{% endcomment %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product-ui.css' %}">
+<link rel="stylesheet" href="{% static 'css/painel.css' %}">
+<link rel="stylesheet" href="{% static 'css/estudo.css' %}">
+{% block estudo_css %}{% endblock %}
+{% endblock %}
+{% block site_header %}{% endblock %}
+{% block site_footer %}{% endblock %}
+{% block main %}
+<div class="painel estudo-layout" data-estudo-layout>
+  <aside class="painel-side offcanvas-lg offcanvas-start" id="estudo-side" tabindex="-1" aria-label="Navegação e histórico">
+    <div class="painel-side-head">
+      <a class="painel-brand" href="{% url 'core:painel' %}"><span class="brand-mark" aria-hidden="true"></span>BrainStream</a>
+      <button type="button" class="btn btn-icon d-lg-none" data-bs-dismiss="offcanvas" data-bs-target="#estudo-side" aria-label="Fechar histórico"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+      <button type="button" class="btn btn-icon estudo-side-toggle" data-side-collapse aria-controls="estudo-side" aria-expanded="true" aria-label="Recolher barra lateral"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+    </div>
+    <nav class="estudo-back" aria-label="Voltar">
+      <a class="estudo-back-link" href="{% url 'core:painel' %}"><i class="bi bi-arrow-left" aria-hidden="true"></i>Voltar ao Painel</a>
+    </nav>
+    <section class="painel-history" aria-labelledby="historico-title">
+      <h2 class="painel-side-title" id="historico-title">Sessões anteriores</h2>
+      {% include 'core/_historico.html' with sessao_atual=sessao %}
+    </section>
+    {% rodape_perfil %}
+  </aside>
+
+  <main class="estudo" id="conteudo">
+    <header class="estudo-top">
+      <button class="btn btn-icon d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#estudo-side" aria-controls="estudo-side" aria-label="Abrir histórico"><i class="bi bi-list" aria-hidden="true"></i></button>
+      <button class="btn btn-icon estudo-side-toggle estudo-expand" type="button" data-side-expand aria-controls="estudo-side" aria-expanded="false" aria-label="Mostrar barra lateral"><i class="bi bi-layout-sidebar" aria-hidden="true"></i></button>
+      <span class="estudo-top-icon" aria-hidden="true"><i class="bi {% block icone %}{% endblock %}"></i></span>
+      <div class="estudo-title">
+        <h1>{{ sessao.tema.nome }}</h1>
+        <span class="estudo-chips">{% block chips %}{% endblock %}</span>
+      </div>
+      {% block top_meta %}{% endblock %}
+      <span class="estudo-points"><span class="estudo-points-label">Pontos</span><i class="bi bi-trophy" aria-hidden="true"></i><strong data-estudo-pontos>{% block pontos %}{{ sessao.pontuacao }}{% endblock %}</strong></span>
+      <button id="theme-toggle" class="btn btn-icon" type="button" aria-label="Ativar tema claro" aria-pressed="true">
+        <i class="bi bi-sun" aria-hidden="true"></i>
+        <span class="visually-hidden" data-theme-label>Tema escuro ativo</span>
+      </button>
+    </header>
+    {% block conteudo %}{% endblock %}
+  </main>
+</div>
+{% block modelos %}{% endblock %}
+{% include 'core/_carregando.html' %}
+{% if messages %}
+  <div class="painel-toasts" aria-live="polite">
+    {% for message in messages %}
+      <div class="painel-message painel-toast" role="status" data-aviso><i class="bi bi-check-circle" aria-hidden="true"></i><p>{{ message }}</p></div>
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'js/carregando.js' %}"></script>
+<script src="{% static 'js/historico.js' %}"></script>
+<script src="{% static 'js/estudo.js' %}"></script>
+{% block estudo_js %}{% endblock %}
+{% endblock %}

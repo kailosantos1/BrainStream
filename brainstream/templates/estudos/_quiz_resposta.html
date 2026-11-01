@@ -1,0 +1,22 @@
+<li class="estudo-msg estudo-msg-estudante">
+  <span class="estudo-avatar estudo-avatar-estudante" aria-hidden="true">{{ iniciais }}</span>
+  <div class="estudo-msg-body">
+    <div class="estudo-bubble"><span class="visually-hidden">Sua resposta:</span><p>{{ questao.resposta }}) {{ questao.texto_resposta }}</p></div>
+    <time class="estudo-time" datetime="{{ questao.respondida_em|date:'c' }}">{{ questao.respondida_em|time:'H:i' }}</time>
+  </div>
+</li>
+<li class="estudo-msg estudo-msg-eneas" id="feedback-{{ questao.ordem }}">
+  {% include 'estudos/_avatar_eneas.html' %}
+  <div class="estudo-msg-body">
+    <div class="estudo-bubble estudo-feedback {% if questao.acertou %}is-correct{% else %}is-wrong{% endif %}">
+      <span class="estudo-badge">Enéas · tutor</span>
+      {% if questao.acertou %}
+        <p class="estudo-veredito"><i class="bi bi-check-circle-fill" aria-hidden="true"></i>Correto! +{{ pontos_por_acerto }} pontos.</p>
+      {% else %}
+        <p class="estudo-veredito"><i class="bi bi-x-circle-fill" aria-hidden="true"></i>Incorreto. A resposta certa é {{ questao.correta }}) {{ questao.texto_correta }}.</p>
+      {% endif %}
+      <p>{{ questao.explicacao }}</p>
+    </div>
+    <time class="estudo-time" datetime="{{ questao.respondida_em|date:'c' }}">{{ questao.respondida_em|time:'H:i' }}</time>
+  </div>
+</li>

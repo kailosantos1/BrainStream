@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>BrainStream</title>
+  <defs>
+    <linearGradient id="bs-flow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2EE6C5"/>
+      <stop offset="50%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#4F46E5"/>
+    </linearGradient>
+    <linearGradient id="bs-border" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2EE6C5" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#4F46E5" stop-opacity="0.15"/>
+    </linearGradient>
+    <radialGradient id="bs-glow" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#2EE6C5" stop-opacity="0.25"/>
+      <stop offset="60%" stop-color="#38BDF8" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#080C14" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Base badge escuro com cantos arredondados modernos (squircle) -->
+  <rect width="64" height="64" rx="16" fill="#080C14"/>
+  <rect width="62" height="62" x="1" y="1" rx="15" fill="none" stroke="url(#bs-border)" stroke-width="1.5"/>
+  <circle cx="28" cy="28" r="22" fill="url(#bs-glow)"/>
+  
+  <!-- Monograma B Stream: Coluna de fluxo com arcos dinâmicos contínuos -->
+  <line x1="21" y1="15" x2="21" y2="49" stroke="url(#bs-flow)" stroke-width="6.5" stroke-linecap="round"/>
+  <!-- Lobo superior: curva de fluxo de conhecimento -->
+  <path d="M 21 16 H 32 C 40.5 16 44.5 19.5 44.5 26.5 C 44.5 33 39 34.5 32 34.5 H 21"
+        fill="none" stroke="url(#bs-flow)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Lobo inferior: curva de velocidade e retenção -->
+  <path d="M 21 34.5 H 34 C 42.5 34.5 46.5 38 46.5 45 C 46.5 51.5 40 52 33 52 H 21"
+        fill="none" stroke="url(#bs-flow)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Ponto de pulso sináptico central -->
+  <circle cx="33" cy="26.5" r="2.2" fill="#FFFFFF"/>
+  <circle cx="34.5" cy="44.5" r="2.2" fill="#FFFFFF"/>
+</svg>

@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% load static painel_tags %}
+{% block title %}Meu perfil · BrainStream{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product-ui.css' %}">
+<link rel="stylesheet" href="{% static 'css/painel.css' %}">
+<link rel="stylesheet" href="{% static 'css/estudo.css' %}">
+<link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+{% endblock %}
+{% block site_header %}{% endblock %}
+{% block site_footer %}{% endblock %}
+{% block main %}
+<div class="painel">
+  <aside class="painel-side offcanvas-lg offcanvas-start" id="perfil-side" tabindex="-1" aria-label="Navegação e histórico">
+    <div class="painel-side-head">
+      <a class="painel-brand" href="{% url 'core:painel' %}"><span class="brand-mark" aria-hidden="true"></span>BrainStream</a>
+      <button type="button" class="btn btn-icon d-lg-none" data-bs-dismiss="offcanvas" data-bs-target="#perfil-side" aria-label="Fechar histórico"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+    </div>
+    <nav class="estudo-back" aria-label="Voltar">
+      <a class="estudo-back-link" href="{% url 'core:painel' %}"><i class="bi bi-arrow-left" aria-hidden="true"></i>Voltar ao Painel</a>
+    </nav>
+    <section class="painel-history" aria-labelledby="historico-title">
+      <h2 class="painel-side-title" id="historico-title">Histórico de estudos</h2>
+      {% include 'core/_historico.html' %}
+    </section>
+    {% rodape_perfil %}
+  </aside>
+
+  <main class="painel-main perfil-main" id="conteudo">
+    <header class="painel-top">
+      <button class="btn btn-icon d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#perfil-side" aria-controls="perfil-side" aria-label="Abrir histórico"><i class="bi bi-list" aria-hidden="true"></i></button>
+      <div class="painel-greeting">
+        <h1>Meu perfil</h1>
+        <p>Gerencie sua conta e acompanhe seu desempenho.</p>
+      </div>
+      <button id="theme-toggle" class="btn btn-icon" type="button" aria-label="Ativar tema claro" aria-pressed="true">
+        <i class="bi bi-sun" aria-hidden="true"></i>
+        <span class="visually-hidden" data-theme-label>Tema escuro ativo</span>
+      </button>
+    </header>
+
+    {% for message in messages %}
+      <div class="painel-message" role="status"><i class="bi bi-check-circle" aria-hidden="true"></i><p>{{ message }}</p></div>
+    {% endfor %}
+
+    <ul class="nav perfil-tabs" role="tablist" data-perfil-abas>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="aba-conta" data-bs-toggle="tab" data-bs-target="#painel-conta" type="button" role="tab" aria-controls="painel-conta" aria-selected="true"><i class="bi bi-person" aria-hidden="true"></i>Dados da Conta</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="aba-desempenho" data-bs-toggle="tab" data-bs-target="#painel-desempenho" type="button" role="tab" aria-controls="painel-desempenho" aria-selected="false" tabindex="-1"><i class="bi bi-graph-up" aria-hidden="true"></i>Desempenho</button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      {# ---------- Aba 1: Dados da Conta ---------- #}
+      <section class="tab-pane fade show active" id="painel-conta" role="tabpanel" aria-labelledby="aba-conta" tabindex="0">
+        <h2 class="perfil-pane-title">Dados da Conta</h2>
+        <div class="painel-card perfil-card">
+          <form method="post" action="{% url 'accounts:perfil' %}" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="acao" value="perfil">
+            <div class="perfil-identidade">
+              {% avatar user 'perfil-avatar' %}
+              <div class="perfil-identidade-texto">
+                <p class="perfil-nome">{{ user.nome }}</p>
+                <p class="perfil-email">{{ user.email }}</p>
+                <p class="perfil-desde">Estudante desde {{ user.date_joined|date:"F \d\e Y"|lower }}</p>
+              </div>
+            </div>
+            <div class="perfil-grid">
+              {% include 'accounts/_campo_perfil.html' with campo=perfil_form.nome %}
+              <div class="perfil-field">
+                <label class="painel-label" for="perfil-email">E-mail</label>
+                <input class="form-control painel-input" id="perfil-email" type="email" value="{{ user.email }}" readonly aria-describedby="perfil-email-ajuda">
+                <p class="perfil-help" id="perfil-email-ajuda">É o seu login e não pode ser alterado aqui.</p>
+              </div>
+              {% include 'accounts/_campo_perfil.html' with campo=perfil_form.avatar ajuda='JPG, PNG ou WebP, até 2 MB. A foto é recortada em quadrado.' %}
+              {% if user.avatar %}
+                <div class="perfil-field perfil-check">
+                  {{ perfil_form.remover_avatar }}
+                  <label for="{{ perfil_form.remover_avatar.id_for_label }}">{{ perfil_form.remover_avatar.label }}</label>
+                </div>
+              {% endif %}
+            </div>
+            <div class="perfil-actions">
+              <button class="btn btn-primary" type="submit">Salvar alterações</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="painel-card perfil-card">
+          <div class="perfil-senha-head">
+            <div>
+              <h3 class="perfil-card-title">Senha</h3>
+              <p class="perfil-help">{% if user.has_usable_password %}Para trocar, confirme a senha atual.{% else %}Você entra com o Google. Defina uma senha para entrar também com e-mail.{% endif %}</p>
+            </div>
+            <button class="btn btn-ghost" type="button" data-bs-toggle="collapse" data-bs-target="#trocar-senha" aria-expanded="{% if senha_aberta %}true{% else %}false{% endif %}" aria-controls="trocar-senha"><i class="bi bi-key" aria-hidden="true"></i>{% if user.has_usable_password %}Alterar senha{% else %}Definir senha{% endif %}</button>
+          </div>
+          <div class="collapse perfil-collapse{% if senha_aberta %} show{% endif %}" id="trocar-senha">
+            <form method="post" action="{% url 'accounts:perfil' %}" novalidate>
+              {% csrf_token %}
+              <input type="hidden" name="acao" value="senha">
+              {% if senha_form.non_field_errors %}<p class="painel-error" role="alert">{{ senha_form.non_field_errors.0 }}</p>{% endif %}
+              <div class="perfil-grid">
+                {% if senha_form.old_password %}{% include 'accounts/_campo_perfil.html' with campo=senha_form.old_password %}{% endif %}
+                {% include 'accounts/_campo_perfil.html' with campo=senha_form.new_password1 ajuda='Pelo menos 8 caracteres, sem ser só números nem parecida com seu nome ou e-mail.' %}
+                {% include 'accounts/_campo_perfil.html' with campo=senha_form.new_password2 %}
+              </div>
+              <div class="perfil-actions">
+                <button class="btn btn-primary" type="submit">{% if user.has_usable_password %}Alterar senha{% else %}Definir senha{% endif %}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      {# ---------- Aba 2: Desempenho ---------- #}
+      <section class="tab-pane fade" id="painel-desempenho" role="tabpanel" aria-labelledby="aba-desempenho" tabindex="0">
+        <h2 class="perfil-pane-title">Desempenho</h2>
+        {% if not desempenho.sessoes_total %}
+          <div class="painel-card perfil-vazio">
+            <p>Seu desempenho aparece aqui depois da primeira sessão de estudo.</p>
+            <a class="btn btn-primary" href="{% url 'core:painel' %}">Começar a estudar</a>
+          </div>
+        {% else %}
+          <div class="perfil-metricas">
+            <div class="painel-kpi painel-kpi-info">
+              <span class="painel-kpi-label"><i class="bi bi-check2-circle" aria-hidden="true"></i>Sessões concluídas</span>
+              <span class="painel-kpi-value" data-metrica="concluidas">{{ desempenho.sessoes_concluidas }}</span>
+              <span class="painel-kpi-note">de {{ desempenho.sessoes_total }} iniciada{{ desempenho.sessoes_total|pluralize }}</span>
+            </div>
+            <div class="painel-kpi painel-kpi-info">
+              <span class="painel-kpi-label"><i class="bi bi-clock-history" aria-hidden="true"></i>Tempo de estudo</span>
+              <span class="painel-kpi-value" data-metrica="tempo">{{ desempenho.tempo_total|duracao }}</span>
+              <span class="painel-kpi-note">somando todas as sessões</span>
+            </div>
+            <div class="painel-kpi painel-kpi-success">
+              <span class="painel-kpi-label"><i class="bi bi-bullseye" aria-hidden="true"></i>Taxa de acerto</span>
+              <span class="painel-kpi-value" data-metrica="acerto">{% if desempenho.taxa_acerto is not None %}{{ desempenho.taxa_acerto }}%{% else %}—{% endif %}</span>
+              <span class="painel-kpi-note">{% if desempenho.taxa_acerto is not None %}em quizzes e speedruns{% else %}aparece após seu primeiro quiz{% endif %}</span>
+            </div>
+            <div class="painel-kpi painel-kpi-warning">
+              <span class="painel-kpi-label"><i class="bi bi-trophy" aria-hidden="true"></i>Pontos</span>
+              <span class="painel-kpi-value" data-metrica="pontos">{{ desempenho.pontos|floatformat:"0g" }}</span>
+              <span class="painel-kpi-note">
+                {% if desempenho.melhor_posicao %}melhor posição: {{ desempenho.melhor_posicao.posicao }}º na semana de {{ desempenho.melhor_posicao.semana|date:"j M"|lower }}
+                {% else %}ainda sem posição no ranking{% endif %}
+              </span>
+            </div>
+          </div>
+
+          <div class="perfil-colunas">
+            <section class="painel-card perfil-card" aria-labelledby="materias-title">
+              <h3 class="perfil-card-title" id="materias-title">Aproveitamento por matéria</h3>
+              <ul class="perfil-materias">
+                {% for materia in desempenho.materias %}
+                  <li>
+                    <div class="perfil-materia-head">
+                      <span class="perfil-materia-nome">{{ materia.nome }}</span>
+                      <span class="perfil-materia-taxa">{% if materia.taxa is not None %}{{ materia.taxa }}%{% else %}sem questões{% endif %}</span>
+                    </div>
+                    <span class="bar perfil-bar" role="img" aria-label="{% if materia.taxa is not None %}{{ materia.taxa }}% de acerto{% else %}Sem questões respondidas{% endif %}"><span style="width: {{ materia.taxa|default:0 }}%"></span></span>
+                    <span class="perfil-materia-meta">{{ materia.sessoes }} sess{{ materia.sessoes|pluralize:"ão,ões" }}{% if materia.questoes %} · {{ materia.acertos }} de {{ materia.questoes }} acertos{% endif %}</span>
+                  </li>
+                {% endfor %}
+              </ul>
+            </section>
+
+            <section class="painel-card perfil-card" aria-labelledby="modos-title">
+              <h3 class="perfil-card-title" id="modos-title">Quizzes e speedruns</h3>
+              <ul class="perfil-modos">
+                {% for modo in desempenho.modos %}
+                  <li class="perfil-modo">
+                    <span class="painel-history-icon" aria-hidden="true"><i class="bi {{ modo.icone }}"></i></span>
+                    <div class="perfil-modo-body">
+                      <div class="perfil-materia-head">
+                        <span class="perfil-materia-nome">{{ modo.rotulo }}</span>
+                        <span class="perfil-materia-taxa" data-modo-taxa="{{ modo.modo }}">{% if modo.taxa is not None %}{{ modo.taxa }}%{% else %}—{% endif %}</span>
+                      </div>
+                      <span class="bar perfil-bar" role="img" aria-label="{% if modo.taxa is not None %}{{ modo.taxa }}% de acerto{% else %}Nenhum concluído{% endif %}"><span style="width: {{ modo.taxa|default:0 }}%"></span></span>
+                      <span class="perfil-materia-meta">
+                        {% if modo.concluidas %}{{ modo.concluidas }} concluído{{ modo.concluidas|pluralize }} · {{ modo.acertos }} de {{ modo.questoes }} acertos · {{ modo.pontos|floatformat:"0g" }} pts
+                        {% else %}Nenhum {{ modo.rotulo|lower }} concluído ainda{% endif %}
+                      </span>
+                    </div>
+                  </li>
+                {% endfor %}
+              </ul>
+            </section>
+          </div>
+        {% endif %}
+      </section>
+    </div>
+  </main>
+</div>
+{% endblock %}
+{% block extra_js %}<script src="{% static 'js/perfil.js' %}"></script>{% endblock %}

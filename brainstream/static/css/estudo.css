@@ -1,0 +1,601 @@
+/*
+ * Telas de estudo (Modo Guiado, Figura 9; Modo Quiz, Figura 10): reaproveitam a coluna lateral do painel e ocupam a área principal
+ * com topo fixo, conversa rolável e campo de resposta sempre visível.
+ */
+@media (min-width: 992px) {
+  .js .estudo-layout.is-side-collapsed {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .js .estudo-layout.is-side-collapsed .painel-side {
+    display: none;
+  }
+}
+
+/* Botões de recolher/mostrar só existem com JS e em telas largas (no celular a lateral é gaveta). */
+.estudo-side-toggle {
+  display: none;
+}
+
+@media (min-width: 992px) {
+  .js .estudo-side-toggle[data-side-collapse],
+  .js .is-side-collapsed .estudo-expand {
+    display: inline-flex;
+  }
+}
+
+.estudo-back {
+  padding: 0.875rem 0.75rem 0;
+}
+
+.estudo-back-link {
+  align-items: center;
+  border-radius: var(--radius-sm);
+  color: var(--color-muted);
+  display: flex;
+  font-size: var(--step-small);
+  font-weight: 500;
+  gap: 0.5rem;
+  padding: 0.55rem 0.5rem;
+  text-decoration: none;
+  transition: background-color var(--t-hover) ease, color var(--t-hover) ease;
+}
+
+.estudo-back-link:hover {
+  background: var(--color-surface-2);
+  color: var(--color-ink);
+}
+
+.estudo-back-link:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.estudo-back + .painel-history {
+  padding-top: 0.75rem;
+}
+
+/* ---------- Área da conversa ---------- */
+.estudo {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100svh;
+  min-width: 0;
+}
+
+.estudo-top {
+  align-items: center;
+  background: var(--color-canvas);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  gap: 0.75rem;
+  min-height: 4rem;
+  padding: 0.625rem var(--page-margin);
+}
+
+.estudo-top-icon {
+  align-items: center;
+  background: var(--color-accent-soft);
+  border-radius: var(--radius-sm);
+  color: var(--color-accent-text);
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 2.25rem;
+  justify-content: center;
+  width: 2.25rem;
+}
+
+.estudo-title {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.625rem;
+  min-width: 0;
+}
+
+.estudo-title h1 {
+  font-size: 1.0625rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  margin: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.estudo-chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  min-width: 0;
+}
+
+.estudo-points {
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-muted);
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: var(--step-xs);
+  gap: 0.35rem;
+  padding: 0.3rem 0.75rem;
+  white-space: nowrap;
+}
+
+.estudo-points .bi {
+  display: none;
+}
+
+.estudo-points strong {
+  color: var(--color-accent-text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* position: relative contém os textos .visually-hidden (absolutos); sem isso eles alongam o documento. */
+.estudo-scroll {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: var(--color-surface-3) transparent;
+  scrollbar-width: thin;
+}
+
+.estudo-feed {
+  display: grid;
+  gap: 1.5rem;
+  list-style: none;
+  margin: 0 auto;
+  max-width: 56rem;
+  padding: 1.75rem var(--page-margin) 2rem;
+}
+
+.estudo-msg {
+  align-items: flex-start;
+  display: flex;
+  gap: 0.75rem;
+  scroll-margin-block: 1.5rem;
+}
+
+.estudo-msg-body {
+  display: grid;
+  gap: 0.35rem;
+  max-width: min(42rem, 85%);
+  min-width: 0;
+}
+
+.estudo-avatar {
+  align-items: center;
+  border-radius: 50%;
+  display: inline-flex;
+  flex-shrink: 0;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  height: 2rem;
+  justify-content: center;
+  width: 2rem;
+}
+
+.estudo-avatar-eneas {
+  box-shadow: 0 0 0 1px var(--color-border-strong);
+  overflow: hidden;
+}
+
+/* Avatar vetorial do Enéas (static/img/eneas.svg): fundo próprio, legível nos dois temas. */
+.estudo-avatar-eneas img {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.estudo-avatar-estudante {
+  background: var(--color-surface-3);
+  color: var(--color-ink);
+}
+
+.estudo-avatar-sistema {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+  font-size: 0.875rem;
+}
+
+.estudo-bubble {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem var(--radius) var(--radius) var(--radius);
+  font-size: 0.9688rem;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  padding: 0.85rem 1.05rem;
+}
+
+.estudo-bubble p {
+  margin: 0;
+}
+
+.estudo-bubble p + p {
+  margin-top: 0.75rem;
+}
+
+.estudo-badge {
+  color: var(--color-accent-text);
+  display: block;
+  font-size: var(--step-xs);
+  font-weight: 650;
+  margin-bottom: 0.3rem;
+}
+
+.estudo-badge-sistema {
+  color: var(--color-warning);
+}
+
+.estudo-time {
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Estudante à direita, com o acento da marca. */
+.estudo-msg-estudante {
+  flex-direction: row-reverse;
+}
+
+.estudo-msg-estudante .estudo-msg-body {
+  justify-items: end;
+}
+
+.estudo-msg-estudante .estudo-bubble {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  border-radius: var(--radius) 0.25rem var(--radius) var(--radius);
+  color: var(--color-accent-ink);
+}
+
+.estudo-msg-estudante.is-pending .estudo-bubble {
+  opacity: 0.7;
+}
+
+.estudo-msg-sistema .estudo-bubble {
+  background: var(--color-warning-soft);
+  border-color: color-mix(in srgb, var(--color-warning) 28%, transparent);
+}
+
+/* Indicador "pensando": três pontos que pulsam; estático com movimento reduzido. */
+.estudo-dots {
+  display: inline-flex;
+  gap: 0.3rem;
+  padding: 0.35rem 0;
+}
+
+.estudo-dots span {
+  animation: estudo-pulso 1.2s var(--ease-in-out) infinite;
+  background: var(--color-muted);
+  border-radius: 50%;
+  height: 0.4rem;
+  width: 0.4rem;
+}
+
+.estudo-dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.estudo-dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes estudo-pulso {
+  0%, 60%, 100% { opacity: 0.35; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-0.2rem); }
+}
+
+/* ---------- Campo de resposta ---------- */
+.estudo-composer-wrap {
+  background: var(--color-canvas);
+  margin: 0 auto;
+  max-width: 56rem;
+  padding: 0.75rem var(--page-margin) 1rem;
+  width: 100%;
+}
+
+.estudo-composer {
+  align-items: flex-end;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem 0.5rem 0.5rem 1rem;
+  transition: border-color var(--t-hover) ease, box-shadow var(--t-hover) ease;
+}
+
+.estudo-composer:focus-within {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.estudo-composer.is-invalid {
+  border-color: var(--color-danger);
+}
+
+.estudo-input {
+  background: transparent;
+  border: 0;
+  color: var(--color-ink);
+  flex: 1;
+  font-size: 1rem;
+  line-height: 1.5;
+  max-height: 10rem;
+  min-height: 2.5rem;
+  padding: 0.45rem 0;
+  resize: none;
+}
+
+.estudo-input:focus {
+  outline: none;
+}
+
+.estudo-input::placeholder {
+  color: var(--color-muted);
+  opacity: 1;
+}
+
+.estudo-send {
+  align-items: center;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 2.5rem;
+  justify-content: center;
+  padding: 0;
+  width: 2.5rem;
+}
+
+.estudo-hint,
+.estudo-error,
+.estudo-closed {
+  font-size: var(--step-xs);
+  margin: 0.5rem 0 0;
+  text-align: center;
+}
+
+.estudo-hint {
+  color: var(--color-muted);
+}
+
+.estudo-error {
+  color: var(--color-danger);
+}
+
+.estudo-closed {
+  color: var(--color-muted);
+  font-size: var(--step-small);
+  padding: 0.75rem 0;
+}
+
+@media (max-width: 575.98px) {
+  .estudo-top {
+    gap: 0.5rem;
+  }
+
+  .estudo-top-icon {
+    display: none;
+  }
+
+  .estudo-title {
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .estudo-title .chip {
+    font-size: 0.6875rem;
+    padding-inline: 0.5rem;
+  }
+
+  /* No celular o rótulo vira ícone; o número continua legível e o leitor de tela ouve "Pontos". */
+  .estudo-points {
+    padding-inline: 0.6rem;
+  }
+
+  .estudo-points .bi {
+    display: inline;
+  }
+
+  .estudo-points-label {
+    clip: rect(0 0 0 0);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+
+  .estudo-feed {
+    gap: 1.25rem;
+    padding-top: 1.25rem;
+  }
+
+  .estudo-msg {
+    gap: 0.5rem;
+  }
+
+  .estudo-msg-body {
+    max-width: 88%;
+  }
+
+  .estudo-avatar {
+    height: 1.75rem;
+    width: 1.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .estudo-dots span {
+    animation: none;
+    opacity: 0.6;
+  }
+
+  .estudo-back-link,
+  .estudo-composer {
+    transition: none;
+  }
+}
+
+/* ---------- Feedback, card final e entrada (Quiz e Speedrun) ---------- */
+/* Feedback do Enéas: o veredito leva a cor; a explicação fica no tom normal do texto. */
+.estudo-veredito {
+  align-items: center;
+  display: flex;
+  font-weight: 650;
+  gap: 0.45rem;
+}
+
+.estudo-feedback.is-correct .estudo-veredito .bi {
+  color: var(--color-success);
+}
+
+.estudo-feedback.is-wrong .estudo-veredito .bi {
+  color: var(--color-danger);
+}
+
+/* ---------- Card final ---------- */
+.estudo-final {
+  display: flex;
+  justify-content: center;
+  padding-top: 0.5rem;
+}
+
+.estudo-final-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-float);
+  display: grid;
+  gap: 0.6rem;
+  justify-items: center;
+  max-width: 30rem;
+  padding: 1.75rem 1.5rem;
+  text-align: center;
+  width: 100%;
+}
+
+.estudo-final-icon {
+  align-items: center;
+  background: var(--color-accent-soft);
+  border-radius: 50%;
+  color: var(--color-accent-text);
+  display: inline-flex;
+  font-size: 1.375rem;
+  height: 3rem;
+  justify-content: center;
+  width: 3rem;
+}
+
+.estudo-final-card h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0.25rem 0 0;
+  text-wrap: balance;
+}
+
+.estudo-final-card p {
+  margin: 0;
+}
+
+.estudo-final-score strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.estudo-final-note {
+  color: var(--color-muted);
+  font-size: var(--step-small);
+  text-wrap: pretty;
+}
+
+.estudo-final-action {
+  margin-top: 0.6rem;
+}
+
+/* Entrada do feedback e do próximo item: só opacidade e um deslize curto. */
+@media (prefers-reduced-motion: no-preference) {
+  .estudo-entrando {
+    animation: estudo-entrada 0.32s var(--ease-out) both;
+  }
+
+  @keyframes estudo-entrada {
+    from { opacity: 0; transform: translateY(0.5rem); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+/* ---------- Modo Guiado: conclusão e indicador "pensando" ---------- */
+.estudo-concluir-form {
+  flex-shrink: 0;
+}
+
+.estudo-concluir {
+  align-items: center;
+  display: inline-flex;
+  font-size: var(--step-small);
+  gap: 0.4rem;
+  padding: 0.4rem 0.85rem;
+  white-space: nowrap;
+}
+
+.estudo-chips .chip .bi {
+  font-size: 0.8em;
+}
+
+/* Só os três pontos: balão compacto, na altura dos pontos e não na de uma linha de texto. */
+.estudo-pensando {
+  align-items: center;
+  display: inline-flex;
+  line-height: 1;
+  padding: 0.7rem 0.9rem;
+}
+
+.estudo-input:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+
+.estudo-encerrado {
+  align-items: flex-start;
+  background: var(--color-success-soft);
+  border: 1px solid color-mix(in srgb, var(--color-success) 30%, transparent);
+  border-radius: var(--radius-lg);
+  display: flex;
+  font-size: var(--step-small);
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+}
+
+.estudo-encerrado p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.estudo-encerrado-icone {
+  color: var(--color-success);
+  font-size: 1.125rem;
+  line-height: 1.4;
+}
+
+@media (max-width: 575.98px) {
+  .estudo-concluir {
+    padding: 0.4rem 0.6rem;
+  }
+
+  .estudo-concluir-texto {
+    clip: rect(0 0 0 0);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+}

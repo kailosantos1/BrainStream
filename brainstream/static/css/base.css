@@ -1,1 +1,478 @@
-/* Estilos globais do BrainStream. */
+/* Fonte local (SIL OFL 1.1, licença em static/vendor/fonts/hanken-grotesk/). */
+@font-face {
+  font-display: swap;
+  font-family: "Hanken Grotesk";
+  font-style: normal;
+  font-weight: 400 700;
+  src: url("../vendor/fonts/hanken-grotesk/hanken-grotesk-latin-var.woff2") format("woff2");
+}
+
+/*
+ * Tokens. O tema escuro é o padrão; o claro usa os mesmos papéis.
+ * O acento é usado com moderação: ação principal, estado ativo, foco e indicadores.
+ */
+:root,
+html[data-theme="dark"] {
+  --color-canvas: #0a0b10;
+  --color-surface: #11131a;
+  --color-surface-2: #181b24;
+  --color-surface-3: #20242f;
+  --color-ink: #eceef3;
+  --color-muted: #9097a6;
+  --color-border: rgb(255 255 255 / 7%);
+  --color-border-strong: rgb(255 255 255 / 12%);
+  --color-highlight: rgb(255 255 255 / 6%);
+  --color-accent: #2ee6c5;
+  --color-accent-strong: #5cf0d4;
+  --color-accent-ink: #03140f;
+  --color-accent-text: #2ee6c5;
+  --color-accent-soft: rgb(46 230 197 / 12%);
+  --color-focus: #2ee6c5;
+  --color-success: #3dd68c;
+  --color-success-soft: rgb(61 214 140 / 14%);
+  --color-warning: #f5b544;
+  --color-warning-soft: rgb(245 181 68 / 14%);
+  --color-info: #5aa9ff;
+  --color-info-soft: rgb(90 169 255 / 14%);
+  --color-danger: #ff7a70;
+  --color-danger-soft: rgb(255 122 112 / 12%);
+  --shadow-window: 0 1px 0 0 var(--color-highlight) inset, 0 40px 80px -24px rgb(0 0 0 / 70%), 0 16px 32px -16px rgb(0 0 0 / 60%);
+  --shadow-float: 0 1px 0 0 var(--color-highlight) inset, 0 24px 48px -12px rgb(0 0 0 / 70%);
+  --glow-accent: 0 0 0 1px rgb(46 230 197 / 45%), 0 0 24px -4px rgb(46 230 197 / 35%);
+}
+
+html[data-theme="light"] {
+  --color-canvas: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-surface-2: #f1f3f6;
+  --color-surface-3: #e7eaef;
+  --color-ink: #0e1116;
+  --color-muted: #5b6372;
+  --color-border: rgb(14 17 22 / 9%);
+  --color-border-strong: rgb(14 17 22 / 14%);
+  --color-highlight: rgb(255 255 255 / 80%);
+  --color-accent: #2ee6c5;
+  --color-accent-strong: #22d4b4;
+  --color-accent-ink: #03140f;
+  --color-accent-text: #087a67;
+  --color-accent-soft: rgb(8 122 103 / 10%);
+  --color-focus: #087a67;
+  --color-success: #138a52;
+  --color-success-soft: rgb(19 138 82 / 10%);
+  --color-warning: #a3620a;
+  --color-warning-soft: rgb(163 98 10 / 10%);
+  --color-info: #1f6fd1;
+  --color-info-soft: rgb(31 111 209 / 10%);
+  --color-danger: #c4352b;
+  --color-danger-soft: rgb(196 53 43 / 9%);
+  --shadow-window: 0 1px 0 0 var(--color-highlight) inset, 0 40px 80px -28px rgb(20 28 45 / 28%), 0 12px 28px -14px rgb(20 28 45 / 20%);
+  --shadow-float: 0 1px 0 0 var(--color-highlight) inset, 0 20px 40px -14px rgb(20 28 45 / 26%);
+  --glow-accent: 0 0 0 1px rgb(8 122 103 / 45%), 0 0 20px -6px rgb(8 122 103 / 35%);
+}
+
+:root {
+  --font-text: "Hanken Grotesk", "Segoe UI", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --bs-body-font-family: var(--font-text);
+
+  --step-xs: 0.8125rem;
+  --step-small: 0.875rem;
+  --step-body: 1.0625rem;
+  --step-lead: clamp(1.125rem, 1.05rem + 0.35vw, 1.3125rem);
+  --step-h3: 1.25rem;
+  --step-h2: clamp(2rem, 1.35rem + 2.2vw, 3.25rem);
+  --step-display: clamp(2.5rem, 1.35rem + 4.4vw, 5rem);
+
+  --page-margin: clamp(1.25rem, 0.8rem + 2vw, 2.5rem);
+  --page-max: 80rem;
+  --section-gap: clamp(6rem, 4rem + 6vw, 10rem);
+  --radius-sm: 0.5rem;
+  --radius: 0.75rem;
+  --radius-lg: 1rem;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --t-press: 120ms;
+  --t-hover: 160ms;
+  --t-ui: 240ms;
+  --t-reveal: 700ms;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+html {
+  scroll-padding-top: 5rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-text);
+  font-size: var(--step-body);
+  line-height: 1.55;
+  transition: background-color var(--t-ui) ease, color var(--t-ui) ease;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-text);
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+}
+
+a {
+  color: inherit;
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  text-decoration-thickness: 0.06em;
+  text-underline-offset: 0.2em;
+  transition: color var(--t-hover) ease, text-decoration-color var(--t-hover) ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  a:hover {
+    color: inherit;
+    text-decoration-color: currentColor;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+}
+
+.container {
+  max-width: calc(var(--page-max) + 2 * var(--page-margin));
+  padding-inline: var(--page-margin);
+}
+
+.skip-link {
+  background: var(--color-accent);
+  border-radius: var(--radius-sm);
+  color: var(--color-accent-ink);
+  left: var(--page-margin);
+  padding: 0.75rem 1rem;
+  position: absolute;
+  top: -4rem;
+  z-index: 1040;
+}
+
+.skip-link:focus {
+  top: 0.75rem;
+}
+
+/* ---------- Marca ---------- */
+.brand-mark {
+  background: url("../img/favicon.svg") no-repeat center / contain;
+  border-radius: 0.375rem;
+  display: inline-block;
+  flex-shrink: 0;
+  height: 1.35rem;
+  margin-right: 0.55rem;
+  position: relative;
+  vertical-align: -0.22em;
+  width: 1.35rem;
+}
+
+/* O ponto central foi substituído pelo ícone vetorial do cérebro neon */
+.brand-mark::after {
+  display: none !important;
+}
+
+/* ---------- Cabeçalho ---------- */
+.site-header {
+  background: color-mix(in srgb, var(--color-canvas) 92%, transparent);
+  border-bottom: 1px solid transparent;
+  position: sticky;
+  top: 0;
+  transition: border-color var(--t-ui) ease, background-color var(--t-ui) ease;
+  z-index: 1030;
+}
+
+.site-header.is-scrolled {
+  border-bottom-color: var(--color-border);
+}
+
+.navbar {
+  min-height: 4rem;
+}
+
+.navbar-brand {
+  align-items: center;
+  color: var(--color-ink);
+  display: inline-flex;
+  font-size: 1.0625rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.navbar-brand:hover,
+.navbar-brand:focus {
+  color: var(--color-ink);
+}
+
+.navbar-nav {
+  gap: 0.25rem 0.5rem;
+}
+
+.navbar-expand-lg .navbar-nav .nav-link,
+.nav-link {
+  border-radius: var(--radius-sm);
+  color: var(--color-muted);
+  font-size: var(--step-small);
+  font-weight: 500;
+  padding-inline: 0.75rem;
+  transition: color var(--t-hover) ease, background-color var(--t-hover) ease;
+}
+
+.nav-link:hover,
+.nav-link:focus {
+  background: var(--color-surface-2);
+  color: var(--color-ink);
+}
+
+.nav-soon {
+  color: var(--color-muted);
+  font-size: var(--step-small);
+  padding-inline: 0.5rem;
+}
+
+.navbar-toggler {
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-ink);
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+/*
+ * Ícone do menu na cor do texto, nos dois temas. O Bootstrap já troca o ícone para branco com
+ * data-bs-theme="dark" (que o <html> também recebe), então o antigo filter: invert(1) o deixava preto
+ * sobre o fundo escuro. Aqui o desenho vira máscara e a cor vem de --color-ink.
+ */
+.navbar-toggler-icon {
+  --icone-menu: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23000' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  background-color: var(--color-ink);
+  background-image: none;
+  -webkit-mask: var(--icone-menu) center / 100% no-repeat;
+  mask: var(--icone-menu) center / 100% no-repeat;
+}
+
+.site-main {
+  min-height: calc(100vh - 9.5rem);
+  /* Cartões em translateZ podem passar da borda; clip não cria contêiner de rolagem e preserva o sticky. */
+  overflow-x: clip;
+}
+
+/* ---------- Botões ---------- */
+.btn {
+  align-items: center;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  font-size: var(--step-small);
+  font-weight: 600;
+  gap: 0.45rem;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding-inline: 1.1rem;
+  transition: transform var(--t-press) var(--ease-out), background-color var(--t-hover) ease, border-color var(--t-hover) ease, color var(--t-hover) ease, box-shadow var(--t-hover) ease;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn:active {
+    transform: none;
+  }
+}
+
+.btn-lg {
+  font-size: 1rem;
+  min-height: 3rem;
+  padding-inline: 1.35rem;
+}
+
+.btn-sm-nav {
+  min-height: 2.25rem;
+  padding-inline: 0.9rem;
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--color-accent);
+  --bs-btn-color: var(--color-accent-ink);
+  --bs-btn-border-color: var(--color-accent);
+  --bs-btn-hover-bg: var(--color-accent-strong);
+  --bs-btn-hover-color: var(--color-accent-ink);
+  --bs-btn-hover-border-color: var(--color-accent-strong);
+  --bs-btn-active-bg: var(--color-accent-strong);
+  --bs-btn-active-color: var(--color-accent-ink);
+  --bs-btn-active-border-color: var(--color-accent-strong);
+  --bs-btn-disabled-bg: var(--color-surface-3);
+  --bs-btn-disabled-border-color: var(--color-surface-3);
+  --bs-btn-disabled-color: var(--color-muted);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover {
+    box-shadow: 0 0 0 4px var(--color-accent-soft);
+  }
+}
+
+.btn-ghost,
+.btn-icon {
+  --bs-btn-color: var(--color-ink);
+  --bs-btn-bg: var(--color-surface-2);
+  --bs-btn-border-color: var(--color-border-strong);
+  --bs-btn-hover-color: var(--color-ink);
+  --bs-btn-hover-bg: var(--color-surface-3);
+  --bs-btn-hover-border-color: var(--color-border-strong);
+  --bs-btn-active-bg: var(--color-surface-3);
+  --bs-btn-active-border-color: var(--color-border-strong);
+  --bs-btn-active-color: var(--color-ink);
+}
+
+.btn-icon {
+  min-height: 2.25rem;
+  padding-inline: 0;
+  width: 2.25rem;
+}
+
+.btn:disabled,
+.btn.disabled {
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+.form-control,
+.form-select {
+  background-color: var(--color-surface);
+  border-color: var(--color-border-strong);
+  color: var(--color-ink);
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--color-surface);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+  color: var(--color-ink);
+}
+
+/* ---------- Rodapé compacto ---------- */
+.site-footer {
+  border-top: 1px solid var(--color-border);
+  color: var(--color-muted);
+  font-size: var(--step-small);
+}
+
+.site-footer-inner {
+  align-items: start;
+  display: grid;
+  gap: 1.5rem 2rem;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) auto;
+  padding-block: 2.5rem;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+.footer-brand {
+  align-items: center;
+  color: var(--color-ink);
+  display: inline-flex;
+  font-weight: 650;
+  margin-bottom: 0.4rem;
+  text-decoration: none;
+}
+
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+}
+
+.footer-nav a,
+.footer-link {
+  color: var(--color-muted);
+  text-decoration: none;
+}
+
+.footer-nav a:hover,
+.footer-link:hover {
+  color: var(--color-ink);
+}
+
+.site-footer-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  text-align: right;
+}
+
+@media (max-width: 991.98px) {
+  /* Menu aberto no celular: cartão flutuante, com contraste no tema escuro. */
+  .navbar-collapse {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-float);
+    margin-top: 0.75rem;
+    padding: 1.25rem;
+  }
+
+  .navbar-collapse .navbar-nav {
+    margin-bottom: 0.75rem !important; /* vence o utilitário mb-3 do Bootstrap, que também usa !important */
+  }
+
+  .navbar-collapse .navbar-nav .nav-link {
+    border-radius: var(--radius-sm);
+    color: var(--color-ink);
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0.65rem 0.85rem;
+  }
+
+  .navbar-collapse .navbar-nav .nav-link:hover,
+  .navbar-collapse .navbar-nav .nav-link:focus {
+    background: var(--color-surface-2);
+    color: var(--color-accent-text); /* o acento puro no escuro; a versão com contraste AA no claro */
+  }
+
+  .site-footer-inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .site-footer-meta {
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto;
+    transition-duration: 0.01ms;
+  }
+}

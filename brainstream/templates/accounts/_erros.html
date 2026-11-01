@@ -1,0 +1,6 @@
+{% if form.non_field_errors %}
+  <div class="auth-alert" role="alert">
+    <i class="bi bi-exclamation-circle" aria-hidden="true"></i>
+    <div>{% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}</div>
+  </div>
+{% endif %}

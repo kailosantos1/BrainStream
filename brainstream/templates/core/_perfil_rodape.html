@@ -1,0 +1,14 @@
+{% load painel_tags %}
+<div class="painel-profile">
+  <a class="painel-profile-link" href="{% url 'accounts:perfil' %}"{% if no_perfil %} aria-current="page"{% endif %}>
+    {% avatar estudante %}
+    <span class="painel-profile-text">
+      <span class="painel-profile-name">{{ estudante.nome }}</span>
+      <span class="painel-profile-meta">{{ pontos_totais|floatformat:"0g" }} pts · Meu perfil</span>
+    </span>
+  </a>
+  <form method="post" action="{% url 'accounts:logout' %}">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <button class="btn btn-icon painel-logout" type="submit" aria-label="Sair da conta" title="Sair"><i class="bi bi-box-arrow-right" aria-hidden="true"></i></button>
+  </form>
+</div>

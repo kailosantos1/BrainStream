@@ -1,0 +1,238 @@
+/*
+ * Modo Speedrun (Figura 11): faixa de tempo restante sob o topo, feed de afirmações e
+ * dois botões largos (Verdadeiro e Falso) no rodapé. Estrutura e balões vêm de estudo.css.
+ */
+.speedrun-timer {
+  --speedrun-cor: var(--color-accent);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.75rem var(--page-margin) 0.875rem;
+}
+
+.speedrun-timer.is-warning {
+  --speedrun-cor: var(--color-warning);
+}
+
+.speedrun-timer.is-urgent {
+  --speedrun-cor: var(--color-danger);
+}
+
+.speedrun-timer-head {
+  align-items: flex-end;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.speedrun-timer-head > span:first-child {
+  color: var(--color-muted);
+  font-size: var(--step-xs);
+}
+
+.speedrun-timer-num {
+  color: var(--color-ink);
+  font-size: 2rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 750;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  min-width: 2ch;
+  text-align: right;
+  transition: color var(--t-ui) ease;
+}
+
+.speedrun-timer.is-urgent .speedrun-timer-num {
+  color: var(--color-danger);
+}
+
+.speedrun-timer-track {
+  background: var(--color-surface-3);
+  border-radius: 999px;
+  height: 0.375rem;
+  overflow: hidden;
+}
+
+/* A largura é atualizada pelo JS (escala horizontal, sem relayout); sem JS a barra fica cheia. */
+.speedrun-timer-bar {
+  background: var(--speedrun-cor);
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+  transform-origin: left center;
+  transition: background-color var(--t-ui) ease;
+  width: 100%;
+}
+
+.speedrun-numero {
+  color: var(--color-accent-text);
+  font-size: var(--step-xs);
+  font-weight: 650;
+  letter-spacing: 0;
+  margin: 0 0 0.3rem;
+}
+
+.speedrun-afirmacao p {
+  font-size: 1.0313rem;
+  font-weight: 550;
+}
+
+.speedrun-escolha {
+  align-items: center;
+  display: inline-flex;
+  font-weight: 600;
+  gap: 0.35rem;
+}
+
+.speedrun-esgotado .estudo-bubble {
+  background: var(--color-surface-3);
+  border-color: var(--color-border-strong);
+  color: var(--color-ink);
+}
+
+.speedrun-proxima {
+  color: var(--color-muted);
+  font-weight: 500;
+  margin-left: 0.25rem;
+}
+
+.estudo-feedback.is-wrong .estudo-veredito .bi-hourglass-bottom {
+  color: var(--color-warning);
+}
+
+.speedrun-justificativa {
+  color: var(--color-muted);
+  font-size: var(--step-small);
+}
+
+/* ---------- Card de preparação ---------- */
+.speedrun-regras {
+  display: grid;
+  gap: 0.6rem;
+  list-style: none;
+  margin: 0.4rem 0 0.2rem;
+  padding: 0;
+  text-align: left;
+  width: 100%;
+}
+
+.speedrun-regras li {
+  align-items: flex-start;
+  display: flex;
+  font-size: var(--step-small);
+  gap: 0.6rem;
+  line-height: 1.45;
+}
+
+.speedrun-regras .bi {
+  color: var(--color-accent-text);
+  flex-shrink: 0;
+  line-height: 1.45;
+}
+
+.speedrun-iniciar {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.4rem;
+}
+
+.speedrun-som[aria-pressed="false"] {
+  color: var(--color-muted);
+}
+
+/* ---------- Botões Verdadeiro e Falso ---------- */
+.speedrun-actions {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: 1fr 1fr;
+}
+
+.speedrun-btn {
+  --bs-btn-color: var(--color-accent-ink);
+  --bs-btn-hover-color: var(--color-accent-ink);
+  --bs-btn-active-color: var(--color-accent-ink);
+  --bs-btn-disabled-color: var(--color-accent-ink);
+  --bs-btn-border-width: 0;
+  align-items: center;
+  border-radius: var(--radius);
+  display: inline-flex;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  gap: 0.45rem;
+  justify-content: center;
+  min-height: 3.5rem;
+  -webkit-tap-highlight-color: transparent;
+  transition: filter var(--t-hover) ease, transform var(--t-press) ease, box-shadow var(--t-hover) ease;
+}
+
+.speedrun-btn-v {
+  --bs-btn-bg: var(--color-success);
+  --bs-btn-hover-bg: var(--color-success);
+  --bs-btn-active-bg: var(--color-success);
+  --bs-btn-disabled-bg: var(--color-success);
+}
+
+.speedrun-btn-f {
+  --bs-btn-bg: var(--color-danger);
+  --bs-btn-hover-bg: var(--color-danger);
+  --bs-btn-active-bg: var(--color-danger);
+  --bs-btn-disabled-bg: var(--color-danger);
+}
+
+html[data-theme="light"] .speedrun-btn {
+  --bs-btn-color: #fff;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-color: #fff;
+  --bs-btn-disabled-color: #fff;
+}
+
+.speedrun-btn:hover {
+  filter: brightness(1.08);
+}
+
+.speedrun-btn:active {
+  transform: scale(0.98);
+}
+
+.speedrun-btn:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.speedrun-btn:disabled {
+  opacity: 0.55;
+}
+
+/* Escolhida (enviando): anel na cor do próprio botão, separado por um fio do fundo. */
+.speedrun-btn.is-sending {
+  box-shadow: 0 0 0 3px var(--color-canvas), 0 0 0 5px var(--bs-btn-bg), 0 0 20px -2px var(--bs-btn-bg);
+  opacity: 1;
+}
+
+.speedrun-btn .bi {
+  font-size: 1.125rem;
+}
+
+@media (max-width: 575.98px) {
+  .speedrun-timer {
+    padding-block: 0.5rem 0.625rem;
+  }
+
+  .speedrun-timer-num {
+    font-size: 1.625rem;
+  }
+
+  .speedrun-btn {
+    min-height: 3.25rem; /* 52px: alvo de toque confortável */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .speedrun-btn:active {
+    transform: none;
+  }
+
+  .speedrun-btn,
+  .speedrun-timer-bar,
+  .speedrun-timer-num {
+    transition: none;
+  }
+}

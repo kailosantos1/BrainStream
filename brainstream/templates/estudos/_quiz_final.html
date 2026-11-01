@@ -1,0 +1,13 @@
+<li class="estudo-final" id="estudo-final">
+  <div class="estudo-final-card" role="status">
+    <span class="estudo-final-icon" aria-hidden="true"><i class="bi bi-trophy"></i></span>
+    <h2>Parabéns, você concluiu o quiz!</h2>
+    <p class="estudo-final-score">Você acertou <strong>{{ sessao.acertos }} de {{ sessao.total_questoes }}</strong> questões e ganhou <strong>{{ sessao.pontuacao }} pontos</strong>.</p>
+    <p class="estudo-final-note">
+      {% if sessao.taxa_acerto >= 80 %}Ótimo domínio de {{ sessao.tema.nome }}. Seus pontos já contam no ranking semanal.
+      {% elif sessao.taxa_acerto >= 60 %}Bom resultado. Revise as explicações das questões que errou para consolidar o tema.
+      {% else %}Vale revisitar {{ sessao.tema.nome }} no Modo Guiado e depois tentar um novo quiz.{% endif %}
+    </p>
+    <a class="btn btn-primary estudo-final-action" href="{% url 'core:painel' %}">Voltar ao Painel <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+  </div>
+</li>

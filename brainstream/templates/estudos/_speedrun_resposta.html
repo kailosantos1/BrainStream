@@ -1,0 +1,31 @@
+<li class="estudo-msg estudo-msg-estudante{% if afirmacao.tempo_esgotado %} speedrun-esgotado{% endif %}">
+  <span class="estudo-avatar estudo-avatar-estudante" aria-hidden="true">{{ iniciais }}</span>
+  <div class="estudo-msg-body">
+    <div class="estudo-bubble">
+      <span class="visually-hidden">Sua resposta:</span>
+      {% if afirmacao.tempo_esgotado %}
+        <p class="speedrun-escolha"><i class="bi bi-hourglass-bottom" aria-hidden="true"></i>Tempo esgotado</p>
+      {% elif afirmacao.resposta %}
+        <p class="speedrun-escolha">Verdadeiro <i class="bi bi-check-lg" aria-hidden="true"></i></p>
+      {% else %}
+        <p class="speedrun-escolha">Falso <i class="bi bi-x-lg" aria-hidden="true"></i></p>
+      {% endif %}
+    </div>
+    <span class="estudo-time"><time datetime="{{ afirmacao.respondida_em|date:'c' }}">{{ afirmacao.respondida_em|time:'H:i' }}</time>{% if afirmacao.segundos is not None and not afirmacao.tempo_esgotado %} · {{ afirmacao.segundos|floatformat:1 }} s{% endif %}</span>
+  </div>
+</li>
+<li class="estudo-msg estudo-msg-eneas" id="feedback-{{ afirmacao.ordem }}">
+  {% include 'estudos/_avatar_eneas.html' %}
+  <div class="estudo-msg-body">
+    <div class="estudo-bubble estudo-feedback {% if afirmacao.acertou %}is-correct{% else %}is-wrong{% endif %}">
+      <p class="estudo-veredito">
+        {% if afirmacao.acertou %}<i class="bi bi-check-circle-fill" aria-hidden="true"></i>Correto! +{{ pontos_por_acerto }} pontos.
+        {% elif afirmacao.tempo_esgotado %}<i class="bi bi-hourglass-bottom" aria-hidden="true"></i>Tempo esgotado. Era {{ afirmacao.gabarito }}.
+        {% else %}<i class="bi bi-x-circle-fill" aria-hidden="true"></i>Incorreto. Era {{ afirmacao.gabarito }}.{% endif %}
+        {% if afirmacao.ordem < total %}<span class="speedrun-proxima">Próxima afirmação:</span>{% endif %}
+      </p>
+      <p class="speedrun-justificativa">{{ afirmacao.justificativa }}</p>
+    </div>
+    <time class="estudo-time" datetime="{{ afirmacao.respondida_em|date:'c' }}">{{ afirmacao.respondida_em|time:'H:i' }}</time>
+  </div>
+</li>

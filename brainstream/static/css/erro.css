@@ -1,0 +1,131 @@
+/*
+ * Páginas de erro (404 e 500). O 500 carrega só este arquivo, base.css e os vendors:
+ * nada aqui depende de context processors, banco ou JS.
+ */
+.erro {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+.erro-topo {
+  padding: 1.5rem clamp(1.25rem, 4vw, 2.5rem);
+}
+
+.erro-marca {
+  align-items: center;
+  color: var(--color-ink);
+  display: inline-flex;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.erro-marca:hover {
+  color: var(--color-ink);
+}
+
+.erro-centro {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem clamp(1.25rem, 4vw, 2.5rem) 4rem;
+}
+
+.erro-cartao {
+  max-width: 34rem;
+  text-align: center;
+  width: 100%;
+}
+
+.erro-icone {
+  align-items: center;
+  background: var(--color-accent-soft);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  color: var(--color-accent-text);
+  display: inline-flex;
+  font-size: 1.75rem;
+  height: 4rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  width: 4rem;
+}
+
+.erro-icone-alerta {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+.erro-titulo {
+  font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 1.75rem;
+  text-wrap: balance;
+}
+
+.erro-titulo-codigo {
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* A fala do Enéas segue o balão do Modo Guiado. */
+.erro-fala {
+  align-items: flex-start;
+  display: flex;
+  gap: 0.75rem;
+  margin: 0 auto 2rem;
+  text-align: left;
+}
+
+.erro-fala-avatar {
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--color-border-strong);
+  flex-shrink: 0;
+  height: 2.25rem;
+  overflow: hidden;
+  width: 2.25rem;
+}
+
+.erro-fala-avatar img {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.erro-fala-balao {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem var(--radius-lg) var(--radius-lg) var(--radius-lg);
+  box-shadow: var(--shadow-float);
+  margin: 0;
+  padding: 0.9rem 1.1rem;
+}
+
+.erro-fala-autor {
+  color: var(--color-muted);
+  display: block;
+  font-size: var(--step-xs);
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.erro-fala-balao p {
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.erro-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+@media (max-width: 575.98px) {
+  .erro-acoes .btn {
+    width: 100%;
+  }
+}

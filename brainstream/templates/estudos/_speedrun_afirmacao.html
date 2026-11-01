@@ -1,0 +1,10 @@
+<li class="estudo-msg estudo-msg-eneas" id="afirmacao-{{ afirmacao.ordem }}" data-speedrun-afirmacao="{{ afirmacao.ordem }}">
+  {% include 'estudos/_avatar_eneas.html' %}
+  <div class="estudo-msg-body">
+    <div class="estudo-bubble speedrun-afirmacao">
+      <h2 class="speedrun-numero">Afirmação {{ afirmacao.ordem }} de {{ total }}</h2>
+      <p>{{ afirmacao.texto }}</p>
+    </div>
+    <time class="estudo-time" datetime="{{ afirmacao.apresentada_em|default:afirmacao.criada_em|date:'c' }}">{{ afirmacao.apresentada_em|default:afirmacao.criada_em|time:'H:i' }}</time>
+  </div>
+</li>

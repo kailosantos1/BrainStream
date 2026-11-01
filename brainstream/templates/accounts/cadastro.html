@@ -1,0 +1,17 @@
+{% extends 'accounts/base_auth.html' %}
+{% block title %}Crie sua conta · BrainStream{% endblock %}
+{% block auth_content %}
+<h1 class="auth-title">Crie sua conta</h1>
+<p class="auth-lead">Comece a estudar com nossa IA guiada.</p>
+{% include 'accounts/_google.html' %}
+<form class="auth-form" method="post" action="{% url 'accounts:cadastro' %}" novalidate data-auth-form>
+  {% csrf_token %}
+  {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+  {% include 'accounts/_erros.html' %}
+  {% include 'accounts/_campo.html' with field=form.nome %}
+  {% include 'accounts/_campo.html' with field=form.email %}
+  {% include 'accounts/_campo.html' with field=form.password %}
+  <button class="btn btn-primary btn-lg auth-submit" type="submit" data-busy-label="Criando conta…">Criar conta gratuita</button>
+</form>
+<p class="auth-switch">Já tem uma conta? <a class="auth-link" href="{% url 'accounts:login' %}{% if next %}?next={{ next|urlencode }}{% endif %}">Entrar</a></p>
+{% endblock %}

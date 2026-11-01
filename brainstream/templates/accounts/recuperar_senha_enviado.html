@@ -1,0 +1,7 @@
+{% extends 'accounts/base_auth.html' %}
+{% block title %}Verifique seu e-mail · BrainStream{% endblock %}
+{% block auth_content %}
+<h1 class="auth-title">Verifique seu e-mail</h1>
+<p class="auth-lead">Se houver uma conta com esse e-mail, você receberá em instantes um link para criar uma nova senha. Confira também a caixa de spam.</p>
+<a class="btn btn-ghost btn-lg auth-submit" href="{% url 'accounts:login' %}">Voltar para o login</a>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'estudos/base_estudo.html' %}
+{% load static %}
+{% block title %}{{ sessao.tema.nome }} · Modo Quiz · BrainStream{% endblock %}
+{% block estudo_css %}<link rel="stylesheet" href="{% static 'css/modo_quiz.css' %}">{% endblock %}
+{% block icone %}bi-file-earmark-text{% endblock %}
+{% block chips %}
+  <span class="chip chip-accent">Modo Quiz</span>
+  <span class="chip" title="Dificuldade escolhida no painel">{{ sessao.get_dificuldade_display }}</span>
+  {% if simuladas %}<span class="chip" title="Questões do banco simulado: sem IA configurada ou a geração falhou">Questões simuladas</span>{% endif %}
+{% endblock %}
+{% block top_meta %}<span class="quiz-counter">Questão <strong data-quiz-numero>{{ numero_atual }}</strong> de {{ total }}</span>{% endblock %}
+{% block pontos %}{{ pontos }}{% endblock %}
+{% block conteudo %}
+    <div class="estudo-scroll" data-estudo-scroll>
+      <ol class="estudo-feed" aria-label="Quiz com o Enéas" aria-live="polite" data-estudo-feed>
+        <li class="estudo-msg estudo-msg-eneas">
+          {% include 'estudos/_avatar_eneas.html' %}
+          <div class="estudo-msg-body">
+            <div class="estudo-bubble">
+              <span class="estudo-badge">Enéas · tutor</span>
+              <p>Bem-vindo ao Quiz sobre {{ sessao.tema.nome }}! Vou fazer {{ total }} perguntas de múltipla escolha. Escolha a alternativa correta e receba feedback imediato: cada acerto vale {{ pontos_por_acerto }} pontos.</p>
+            </div>
+            <time class="estudo-time" datetime="{{ sessao.data_inicio|date:'c' }}">{{ sessao.data_inicio|time:'H:i' }}</time>
+          </div>
+        </li>
+        {% for questao in visiveis %}
+          {% include 'estudos/_quiz_questao.html' %}
+          {% if questao.respondida %}
+            {% include 'estudos/_quiz_resposta.html' %}
+          {% endif %}
+        {% endfor %}
+        {% if concluida %}{% include 'estudos/_quiz_final.html' %}{% endif %}
+      </ol>
+    </div>
+    <div class="estudo-composer-wrap quiz-foot">
+      <p class="estudo-error" id="quiz-erro" role="alert" data-quiz-erro{% if not erro %} hidden{% endif %}>{{ erro }}</p>
+      <p class="estudo-hint" data-quiz-dica>{% if concluida %}Quiz concluído. Seus pontos já aparecem no painel.{% else %}Escolha uma alternativa para receber o feedback do Enéas.{% endif %}</p>
+    </div>
+{% endblock %}
+{% block estudo_js %}<script src="{% static 'js/modo_quiz.js' %}"></script>{% endblock %}

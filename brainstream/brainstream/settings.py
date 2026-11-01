@@ -10,22 +10,35 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+from django.core.exceptions import ImproperlyConfigured
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# O .env fica na raiz do repositório; variáveis já definidas no ambiente têm prioridade.
+load_dotenv(BASE_DIR.parent / '.env')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4ju(k$7d)pnqqkyzhk#68f^ljmse=!u-o-dew5xr3dc(=gwqeg'
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False').strip().lower() in ('1', 'true', 'yes', 'on')
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+if not SECRET_KEY:
+    if not DEBUG:
+        raise ImproperlyConfigured('Defina DJANGO_SECRET_KEY quando DJANGO_DEBUG estiver desativado.')
+    SECRET_KEY = 'django-insecure-somente-para-desenvolvimento-local'
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.trycloudflare.com', '.ngrok-free.app', '.ngrok.io']
+CSRF_TRUSTED_ORIGINS = [ 'https://*.trycloudflare.com', 'https://*.ngrok-free.app', 'https://*.ngrok.io', ] 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Application definition
@@ -38,6 +51,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
+    'accounts',
+    'estudos',
 ]
 
 MIDDLEWARE = [
@@ -76,8 +91,12 @@ WSGI_APPLICATION = 'brainstream.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('DB_NAME', 'brainstream'),
+        'USER': os.environ.get('DB_USER', 'root'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '3306'),
     }
 }
 
@@ -104,9 +123,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -119,7 +138,41 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
+# Uploads (fotos de perfil). Em desenvolvimento o Django serve /media/; em produção, o servidor web.
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Autenticação
+AUTH_USER_MODEL = 'accounts.Estudante'
+LOGIN_URL = 'accounts:login'
+LOGIN_REDIRECT_URL = 'core:painel'
+LOGOUT_REDIRECT_URL = 'core:index'
+
+# Login com Google (OAuth 2.0 / OpenID Connect). Sem ID e segredo, o botão avisa que não está configurado.
+# O GOOGLE_REDIRECT_URI precisa estar cadastrado igualzinho no Google Cloud Console.
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '').strip()
+GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '').strip()
+GOOGLE_REDIRECT_URI = os.environ.get('GOOGLE_REDIRECT_URI', '').strip() or 'http://localhost:8000/accounts/google/callback/'
+
+# E-mail: no desenvolvimento, as mensagens (ex.: recuperação de senha) aparecem no console.
+EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'BrainStream <nao-responda@brainstream.local>')
+
+# Tutor Enéas. Sem AI_API_KEY, o Modo Guiado usa um tutor simulado, sem rede.
+# AI_PROVIDER: "gemini" ou "anthropic"; vazio = detectar pela chave (AIza... = Gemini).
+# AI_MODEL vazio = padrão do provedor: gemini-3.5-flash-lite ou claude-opus-5-5 (ver estudos/services/tutor.py).
+AI_PROVIDER = os.environ.get('AI_PROVIDER', '').strip().lower()
+AI_API_KEY = os.environ.get('AI_API_KEY', '').strip()
+AI_MODEL = os.environ.get('AI_MODEL', '').strip()
+AI_TIMEOUT = float(os.environ.get('AI_TIMEOUT', '60'))
+# Busca na web (Google Search grounding) no diálogo do Enéas com o Gemini, só quando a mensagem ou o
+# tema pedem fatos atuais (ver tutor.pede_fatos_atuais). AI_SEARCH=False desliga.
+AI_SEARCH_ENABLED = os.environ.get('AI_SEARCH', 'True').strip().lower() in ('1', 'true', 'yes', 'on')
+
+# Os testes nunca chamam a IA real (ver brainstream/test_runner.py).
+TEST_RUNNER = 'brainstream.test_runner.SemIARealRunner'
