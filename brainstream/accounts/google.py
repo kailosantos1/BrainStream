@@ -45,14 +45,22 @@ def _desafio_pkce(verificador):
     return base64.urlsafe_b64encode(resumo).rstrip(b'=').decode('ascii')
 
 
-def iniciar(sessao, destino):
-    """Gera ``state`` e o verificador PKCE, guarda na sessão e devolve a URL de autorização do Google."""
+def iniciar(sessao, destino, redirect_uri=None):
+    """
+    Gera ``state`` e o verificador PKCE, guarda na sessão e devolve a URL de autorização do Google.
+    ``redirect_uri`` (ex.: o domínio atual, localhost ou túnel) também fica na sessão, pois a troca do
+    código precisa repetir exatamente o mesmo valor; sem ele, vale ``GOOGLE_REDIRECT_URI``.
+    """
+    redirect_uri = redirect_uri or settings.GOOGLE_REDIRECT_URI
     state = secrets.token_urlsafe(32)
     verificador = secrets.token_urlsafe(64)
-    sessao[CHAVE_SESSAO] = {'state': state, 'verificador': verificador, 'destino': destino, 'criado': time.time()}
+    sessao[CHAVE_SESSAO] = {
+        'state': state, 'verificador': verificador, 'destino': destino,
+        'redirect_uri': redirect_uri, 'criado': time.time(),
+    }
     parametros = {
         'client_id': settings.GOOGLE_CLIENT_ID,
-        'redirect_uri': settings.GOOGLE_REDIRECT_URI,
+        'redirect_uri': redirect_uri,
         'response_type': 'code',
         'scope': ESCOPOS,
         'state': state,
@@ -78,14 +86,15 @@ def validar_retorno(sessao, state_recebido):
     return guardado
 
 
-def trocar_codigo(codigo, verificador):
+def trocar_codigo(codigo, verificador, redirect_uri=None):
     """Troca o ``code`` pelo access token (servidor → Google)."""
+    redirect_uri = redirect_uri or settings.GOOGLE_REDIRECT_URI
     try:
         resposta = httpx.post(URL_TOKEN, data={
             'code': codigo,
             'client_id': settings.GOOGLE_CLIENT_ID,
             'client_secret': settings.GOOGLE_CLIENT_SECRET,
-            'redirect_uri': settings.GOOGLE_REDIRECT_URI,
+            'redirect_uri': redirect_uri,
             'grant_type': 'authorization_code',
             'code_verifier': verificador,
         }, timeout=TIMEOUT_SEGUNDOS)

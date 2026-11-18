@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, resolve_url
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.db import IntegrityError
+from django.urls import reverse
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
 from estudos.metricas import desempenho, iniciais
@@ -102,7 +103,9 @@ def google_login(request):
         return redirect('accounts:login')
     if request.user.is_authenticated:
         return redirect(_destino(request))
-    return redirect(google.iniciar(request.session, _destino(request)))
+    # Domínio atual (localhost ou túnel); o host já passou por ALLOWED_HOSTS e o Google só aceita URIs cadastradas.
+    uri_retorno = request.build_absolute_uri(reverse('accounts:google_callback'))
+    return redirect(google.iniciar(request.session, _destino(request), redirect_uri=uri_retorno))
 
 
 def _estudante_do_google(dados):
@@ -135,7 +138,8 @@ def google_callback(request):
         codigo = request.GET.get('code')
         if not codigo:
             raise google.FalhaGoogle('O Google não confirmou o login. Tente de novo.')
-        dados = google.dados_do_usuario(google.trocar_codigo(codigo, guardado['verificador']))
+        dados = google.dados_do_usuario(google.trocar_codigo(
+            codigo, guardado['verificador'], redirect_uri=guardado.get('redirect_uri')))
         estudante, criado = _estudante_do_google(dados)
     except google.FalhaGoogle as falha:
         messages.error(request, falha.mensagem)
