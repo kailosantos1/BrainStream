@@ -8,9 +8,12 @@ Duas camadas independentes:
 2. ``prompt_de_sistema``: instrução fixa enviada à LLM em toda chamada, que mantém o Enéas
    socrático e restrito ao tema.
 """
+import logging
 import re
 import unicodedata
 from dataclasses import dataclass
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -37,12 +40,23 @@ OFENSAS = _compilar([
     r'\b(cala a boca|te odeio)\b',
 ])
 
+# Objetos de exercício: "esse exercício", "a resposta da questão 3" etc. continuam sendo pedido de gabarito.
+EXERCICIO = r'(exercicios?|quest(ao|oes)|contas?|problemas?|listas?|atividades?|tarefas?|equac(ao|oes)|perguntas?|calculos?|provas?)'
+DEMONSTRATIVO = r'(isso|isto|esse|essa|este|esta|esses|essas|estes|estas)'
+# "Resposta" seguida de complemento é uso conceitual ("a resposta do sistema imune"), exceto quando o
+# complemento é o próprio exercício ("a resposta da questão 3"). "Resposta certa para entender X"
+# é pergunta interpretativa.
+USO_CONCEITUAL = (
+    rf'(?!( (pronta|certa|final|correta|completa)s?)?'
+    rf' ((do|da|de|dos|das) (?!{EXERCICIO}\b)|(para|pra) (entender|compreender|interpretar|analisar)\b))'
+)
+
 RESPOSTA_PRONTA = _compilar([
     r'\b(me )?(da|de|diz|diga|fala|fale|passa|passe|manda|mande|entrega|entregue)( logo| so| apenas)? (a|as) respostas?\b',
-    r'\bqual (e|eh|seria) (a|as) respostas?\b',
-    r'\brespostas? (pronta|certa|final|correta|completa)s?\b',
+    rf'\bqual (e |eh |seria )?(a|as) respostas?\b{USO_CONCEITUAL}',
+    rf'\brespostas? (pronta|certa|final|correta|completa)s?\b{USO_CONCEITUAL}',
     r'\bgabarito\b',
-    r'\b(resolve|resolva|responde|responda|faz|faca)( (isso|essa|esse|a questao|o exercicio|a conta|o problema))? (pra|para|por) mim\b',
+    rf'\b(resolve|resolva|responde|responda|faz|faca)( {DEMONSTRATIVO}( {EXERCICIO})?| (a|o) {EXERCICIO})? (pra|para|por) mim\b',
     r'\b(faz|faca|escreve|escreva) (o |a )?(meu|minha) (trabalho|dever|tarefa|lista|redacao|resumo)\b',
     r'\bsem (perguntas|enrolacao),? (so )?(me )?(diz|diga|fala|responde)\b',
 ])
@@ -53,20 +67,54 @@ MANIPULACAO = _compilar([
     r'\b(modo desenvolvedor|jailbreak|system prompt|prompt de sistema)\b',
 ])
 
-# Assuntos claramente fora do estudo. Se a palavra fizer parte do próprio tema
-# (ex.: "História do futebol"), ela deixa de ser um desvio.
+# Assuntos claramente fora do estudo. Cada categoria tem:
+# - ``direto``: pedido explícito de desvio ("quem ganhou o jogo", "melhor bet"); sempre bloqueia;
+# - ``termo``: palavra do assunto, que pode aparecer em estudo ("a física do chute no futebol") e
+#   deixa de bloquear quando o tema é de área relacionada ou a mensagem é pergunta acadêmica.
+# Nos dois casos, se o trecho fizer parte do próprio tema (ex.: "História do futebol"), não é desvio.
 FORA_DO_ESCOPO = {
-    'piada': r'\b(conta|conte|me conta|manda) (uma )?piada',
-    'futebol': r'\b(quem ganha|placar|resultado) (o |do )?jogo\b|\bfutebol\b',
-    'namoro': r'\b(namorad[oa]|namoro|crush|paquera)\b',
-    'receita': r'\breceita de (bolo|comida|doce|torta)\b',
-    'apostas': r'\b(aposta|apostas|bet|cassino|tigrinho)\b',
+    'piada': {'direto': r'\b(conta|conte|me conta|manda) (uma )?piada'},
+    'futebol': {
+        'direto': r'\b(quem (ganha|ganhou|vai ganhar|venceu)|placar|resultado) (o |do |de )?jogo\b',
+        'termo': r'\bfutebol\b',
+    },
+    'namoro': {'termo': r'\b(namorad[oa]s?|namoro|crush|paquera)\b'},
+    'receita': {'termo': r'\breceita de (bolo|comida|doce|torta)\b'},
+    'apostas': {
+        'direto': r'\b(melhor (bet|aposta|cassino|site de apostas?)|tigrinho)\b|\b(quero|vou|vamos|bora) apostar\b',
+        'termo': r'\b(aposta|apostas|apostar|bet|cassino)\b',
+    },
     # "série" fica de fora: aparece em matemática (séries numéricas) e na escola ("2ª série").
-    'entretenimento': r'\b(netflix|novela|reality show|fofoca|influencer)\b',
-    'jogos': r'\b(videogame|free fire|minecraft|fortnite|roblox|lol)\b',
-    'hacking': r'\b(hackear|invadir (conta|perfil|sistema)|senha de alguem)\b',
+    'entretenimento': {'termo': r'\b(netflix|novelas?|reality shows?|fofocas?|influencers?)\b'},
+    'jogos': {
+        'direto': r'\b(joga|jogue|jogar)\b.{0,30}\bcomigo\b',
+        'termo': r'\b(videogames?|free fire|minecraft|fortnite|roblox|lol)\b',
+    },
+    # Sem exceções: pedir para invadir contas nunca é pergunta de estudo.
+    'hacking': {'direto': r'\b(hackear|invadir (conta|perfil|sistema)|senha de alguem)\b'},
 }
-FORA_DO_ESCOPO = {chave: re.compile(padrao) for chave, padrao in FORA_DO_ESCOPO.items()}
+FORA_DO_ESCOPO = {
+    categoria: {tipo: re.compile(padrao) for tipo, padrao in padroes.items()}
+    for categoria, padroes in FORA_DO_ESCOPO.items()
+}
+
+# Temas de áreas em que o termo é objeto de estudo (comparados já normalizados, por palavra).
+AREAS_RELACIONADAS = {
+    'apostas': ('probabilidade', 'estatistica', 'matematica'),
+    'futebol': ('fisica', 'educacao fisica', 'historia'),
+    'jogos': ('fisica', 'computacao', 'programacao', 'matematica'),
+    'entretenimento': ('sociologia', 'comunicacao', 'psicologia'),
+}
+AREAS_RELACIONADAS = {
+    categoria: re.compile(r'\b(' + '|'.join(areas) + r')\b')
+    for categoria, areas in AREAS_RELACIONADAS.items()
+}
+
+# Marcadores de pergunta acadêmica. "como" sozinho é amplo demais ("como hackear").
+PERGUNTA_ACADEMICA = re.compile(
+    r'\b(por que|qual (e )?a relacao|qual (e )?a (fisica|quimica|matematica|biologia|logica)'
+    r'|como funcionam?|como (se )?calculam?|expli(ca|que|car) como|qual (e )?a (chance|probabilidade))\b'
+)
 
 RESPOSTAS = {
     'ofensa': (
@@ -89,12 +137,32 @@ RESPOSTAS = {
 }
 
 
-def verificar(texto, tema):
-    """Devolve um ``Bloqueio`` quando a mensagem não deve chegar à LLM; ``None`` caso contrário."""
+def _fora_do_escopo(normalizado, tema_normalizado):
+    academica = PERGUNTA_ACADEMICA.search(normalizado) is not None
+    for categoria, padroes in FORA_DO_ESCOPO.items():
+        for tipo, padrao in padroes.items():
+            encontrado = padrao.search(normalizado)
+            if not encontrado or encontrado.group(0) in tema_normalizado:
+                continue
+            area = AREAS_RELACIONADAS.get(categoria)
+            if tipo == 'termo' and (academica or (area and area.search(tema_normalizado))):
+                continue
+            return True
+    return False
+
+
+def verificar(texto, tema, registrar=True):
+    """
+    Devolve um ``Bloqueio`` quando a mensagem não deve chegar à LLM; ``None`` caso contrário.
+    ``registrar=False`` evita repetir no log os bloqueios de mensagens já salvas (reverificação do histórico).
+    """
     normalizado = normalizar(texto)
     tema_normalizado = normalizar(tema)
 
     def bloquear(motivo):
+        if registrar:
+            # Só motivo e tema: o texto do estudante não vai para o log.
+            logger.info('Context locking bloqueou mensagem: motivo=%s tema=%s', motivo, tema)
         return Bloqueio(motivo, RESPOSTAS[motivo].format(tema=tema))
 
     if any(padrao.search(normalizado) for padrao in OFENSAS):
@@ -103,10 +171,8 @@ def verificar(texto, tema):
         return bloquear('manipulacao')
     if any(padrao.search(normalizado) for padrao in RESPOSTA_PRONTA):
         return bloquear('resposta_pronta')
-    for padrao in FORA_DO_ESCOPO.values():
-        encontrado = padrao.search(normalizado)
-        if encontrado and encontrado.group(0) not in tema_normalizado:
-            return bloquear('fora_do_escopo')
+    if _fora_do_escopo(normalizado, tema_normalizado):
+        return bloquear('fora_do_escopo')
     return None
 
 

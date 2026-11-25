@@ -103,7 +103,7 @@ def montar_historico(sessao, mensagens):
         mensagem for mensagem in mensagens
         if mensagem.autor == MensagemSessao.Autor.ENEAS
         or (mensagem.autor == MensagemSessao.Autor.ESTUDANTE
-            and context_locking.verificar(mensagem.conteudo, sessao.tema.nome) is None)
+            and context_locking.verificar(mensagem.conteudo, sessao.tema.nome, registrar=False) is None)
     ]
     for mensagem in relevantes[-LIMITE_HISTORICO:]:
         papel = 'assistant' if mensagem.autor == MensagemSessao.Autor.ENEAS else 'user'
@@ -151,7 +151,7 @@ def sintese_simulada(sessao, mensagens):
     respostas = [
         mensagem.conteudo for mensagem in mensagens
         if mensagem.autor == MensagemSessao.Autor.ESTUDANTE
-        and context_locking.verificar(mensagem.conteudo, sessao.tema.nome) is None
+        and context_locking.verificar(mensagem.conteudo, sessao.tema.nome, registrar=False) is None
     ]
     destaques = sorted(respostas, key=lambda texto: len(texto.split()), reverse=True)[:2]
     tema = sessao.tema.nome

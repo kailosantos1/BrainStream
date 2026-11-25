@@ -48,7 +48,7 @@ def respostas_legitimas(sessao, mensagens):
         if (
             len(normalizada.split()) < MINIMO_PALAVRAS
             or normalizada in vistas
-            or context_locking.verificar(mensagem.conteudo, sessao.tema.nome) is not None
+            or context_locking.verificar(mensagem.conteudo, sessao.tema.nome, registrar=False) is not None
         ):
             continue
         vistas.add(normalizada)
