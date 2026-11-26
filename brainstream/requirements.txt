@@ -1,12 +1,18 @@
-# Compatível com Python 3.9.6 no ambiente atual.
+# Compatível com Python 3.12 na Vercel (e Python 3.9+ em desenvolvimento local).
 Django==4.2.30
 python-dotenv==1.2.1
 PyMySQL==1.2.3
-# SDK oficial da Claude API (tutor Enéas); 0.125.0 é a última versão compatível com Python 3.9.
+# Necessário para autenticação segura e TLS com MySQL 8 / TiDB Cloud via PyMySQL.
+cryptography>=43.0.0,<47.0
+# Arquivos estáticos em produção (fallback WSGI e compressão junto ao CDN da Vercel).
+whitenoise>=6.8.2,<7.0
+# Armazenamento persistente de avatares via API S3 do Supabase Storage.
+django-storages[s3]>=1.14.4,<2.0
+# SDK oficial da Claude API (tutor Enéas).
 anthropic==0.125.0
-# SDK oficial do Google Gemini (substitui o descontinuado google-generativeai); 1.47.0 roda no Python 3.9.
+# SDK oficial do Google Gemini (substitui o descontinuado google-generativeai).
 google-genai==1.47.0
-# Fotos de perfil (ImageField): validação, redimensionamento e remoção de EXIF; 11.x é a última com Python 3.9.
+# Fotos de perfil (ImageField): validação, redimensionamento e remoção de EXIF.
 Pillow==11.3.0
 # Cliente HTTP do login com Google (já vinha como dependência dos SDKs de IA; agora é usado diretamente).
 httpx==0.28.1

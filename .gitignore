@@ -29,5 +29,6 @@ staticfiles/
 
 .claude/
 .impeccable/
+.vercel/
 tests/
 AGENTS.md

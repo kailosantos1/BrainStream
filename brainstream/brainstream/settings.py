@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import os
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
@@ -23,11 +24,154 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR.parent / '.env')
 
 
+def _env_bool(nome, padrao=False, env=None):
+    origem = os.environ if env is None else env
+    bruto = origem.get(nome)
+    if bruto is None or not str(bruto).strip():
+        return padrao
+    return str(bruto).strip().lower() in ('1', 'true', 'yes', 'on')
+
+
+def _env_lista(nome, env=None):
+    origem = os.environ if env is None else env
+    bruto = origem.get(nome, '')
+    return [item.strip() for item in bruto.split(',') if item.strip()]
+
+
+def _extrair_host(valor):
+    valor = (valor or '').strip()
+    if not valor:
+        return ''
+    if '://' in valor:
+        return (urlsplit(valor).hostname or '').strip()
+    return valor.split('/')[0].strip()
+
+
+def _unicos(itens):
+    return list(dict.fromkeys(item for item in itens if item))
+
+
+def _configurar_allowed_hosts(env=None, debug=False):
+    origem = os.environ if env is None else env
+    hosts = _env_lista('DJANGO_ALLOWED_HOSTS', env=origem)
+    if not hosts:
+        hosts = ['localhost', '127.0.0.1', '.vercel.app']
+        if debug:
+            hosts.extend(['.trycloudflare.com', '.ngrok-free.app', '.ngrok.io'])
+    for var_vercel in ('VERCEL_URL', 'VERCEL_PROJECT_PRODUCTION_URL'):
+        host = _extrair_host(origem.get(var_vercel))
+        if host:
+            hosts.append(host)
+    return _unicos(hosts)
+
+
+def _configurar_csrf_trusted_origins(env=None, debug=False):
+    origem = os.environ if env is None else env
+    origens = _env_lista('DJANGO_CSRF_TRUSTED_ORIGINS', env=origem)
+    if not origens:
+        origens = ['https://*.vercel.app']
+        if debug:
+            origens.extend(['https://*.trycloudflare.com', 'https://*.ngrok-free.app', 'https://*.ngrok.io'])
+    for var_vercel in ('VERCEL_URL', 'VERCEL_PROJECT_PRODUCTION_URL'):
+        host = _extrair_host(origem.get(var_vercel))
+        if host:
+            origens.append(f'https://{host}')
+    return _unicos(origens)
+
+
+def _configurar_banco(env=None):
+    """
+    Configura o banco MySQL (local ou TiDB Cloud Starter).
+    ``CONN_MAX_AGE = 0`` evita conexões persistentes em funções serverless.
+    Quando ``DB_SSL_CA`` é definido, exige TLS com validação de certificado e identidade do servidor.
+    """
+    origem = os.environ if env is None else env
+    config = {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': origem.get('DB_NAME', 'brainstream'),
+        'USER': origem.get('DB_USER', 'root'),
+        'PASSWORD': origem.get('DB_PASSWORD', ''),
+        'HOST': origem.get('DB_HOST', 'localhost'),
+        'PORT': origem.get('DB_PORT', '3306'),
+        'CONN_MAX_AGE': 0,
+    }
+    ssl_ca = (origem.get('DB_SSL_CA') or '').strip()
+    if ssl_ca:
+        config['OPTIONS'] = {
+            'ssl_ca': ssl_ca,
+            'ssl_verify_cert': True,
+            'ssl_verify_identity': True,
+        }
+    return config
+
+
+SUPABASE_STORAGE_VARS = (
+    'SUPABASE_PROJECT_REF',
+    'SUPABASE_S3_ENDPOINT',
+    'SUPABASE_S3_REGION',
+    'SUPABASE_S3_BUCKET',
+    'SUPABASE_S3_ACCESS_KEY',
+    'SUPABASE_S3_SECRET_KEY',
+)
+
+
+def _configurar_storages(env=None, debug=False):
+    """
+    Configura o armazenamento de mídia (local em desenvolvimento ou Supabase Storage S3 em produção)
+    e de arquivos estáticos (WhiteNoise em produção). Se apenas parte das variáveis do Supabase for
+    informada, falha explicitamente com ``ImproperlyConfigured``.
+    """
+    origem = os.environ if env is None else env
+    valores = {var: (origem.get(var) or '').strip() for var in SUPABASE_STORAGE_VARS}
+    preenchidas = [var for var, valor in valores.items() if valor]
+
+    if preenchidas and len(preenchidas) < len(SUPABASE_STORAGE_VARS):
+        faltantes = [var for var in SUPABASE_STORAGE_VARS if not valores[var]]
+        raise ImproperlyConfigured(
+            'Configuração incompleta do Supabase Storage. Defina também: ' + ', '.join(faltantes) + '.'
+        )
+
+    if preenchidas:
+        project_ref = valores['SUPABASE_PROJECT_REF']
+        bucket = valores['SUPABASE_S3_BUCKET']
+        endpoint = valores['SUPABASE_S3_ENDPOINT'].rstrip('/')
+        default_storage = {
+            'BACKEND': 'storages.backends.s3.S3Storage',
+            'OPTIONS': {
+                'access_key': valores['SUPABASE_S3_ACCESS_KEY'],
+                'secret_key': valores['SUPABASE_S3_SECRET_KEY'],
+                'bucket_name': bucket,
+                'region_name': valores['SUPABASE_S3_REGION'],
+                'endpoint_url': endpoint,
+                'custom_domain': f'{project_ref}.supabase.co/storage/v1/object/public/{bucket}',
+                'addressing_style': 'path',
+                'signature_version': 's3v4',
+                'querystring_auth': False,
+                'default_acl': None,
+                'file_overwrite': False,
+            },
+        }
+    else:
+        default_storage = {
+            'BACKEND': 'django.core.files.storage.FileSystemStorage',
+        }
+
+    staticfiles_backend = (
+        'django.contrib.staticfiles.storage.StaticFilesStorage'
+        if debug
+        else 'whitenoise.storage.CompressedStaticFilesStorage'
+    )
+    return {
+        'default': default_storage,
+        'staticfiles': {'BACKEND': staticfiles_backend},
+    }
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUG', 'False').strip().lower() in ('1', 'true', 'yes', 'on')
+DEBUG = _env_bool('DJANGO_DEBUG', padrao=False)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
@@ -36,9 +180,17 @@ if not SECRET_KEY:
         raise ImproperlyConfigured('Defina DJANGO_SECRET_KEY quando DJANGO_DEBUG estiver desativado.')
     SECRET_KEY = 'django-insecure-somente-para-desenvolvimento-local'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.trycloudflare.com', '.ngrok-free.app', '.ngrok.io']
-CSRF_TRUSTED_ORIGINS = [ 'https://*.trycloudflare.com', 'https://*.ngrok-free.app', 'https://*.ngrok.io', ] 
+ALLOWED_HOSTS = _configurar_allowed_hosts(debug=DEBUG)
+CSRF_TRUSTED_ORIGINS = _configurar_csrf_trusted_origins(debug=DEBUG)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_REFERRER_POLICY = 'same-origin'
+    SECURE_SSL_REDIRECT = _env_bool('DJANGO_SECURE_SSL_REDIRECT', padrao=bool(os.environ.get('VERCEL')))
 
 
 # Application definition
@@ -57,6 +209,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -90,14 +243,7 @@ WSGI_APPLICATION = 'brainstream.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME', 'brainstream'),
-        'USER': os.environ.get('DB_USER', 'root'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '3306'),
-    }
+    'default': _configurar_banco(),
 }
 
 
@@ -135,12 +281,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Uploads (fotos de perfil). Em desenvolvimento o Django serve /media/; em produção, o servidor web.
-MEDIA_URL = 'media/'
+# Uploads (fotos de perfil). Sem Supabase configurado, usa MEDIA_ROOT local; em produção, Supabase Storage (S3).
+MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+STORAGES = _configurar_storages(debug=DEBUG)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -169,10 +318,10 @@ DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'BrainStream <nao-resp
 AI_PROVIDER = os.environ.get('AI_PROVIDER', '').strip().lower()
 AI_API_KEY = os.environ.get('AI_API_KEY', '').strip()
 AI_MODEL = os.environ.get('AI_MODEL', '').strip()
-AI_TIMEOUT = float(os.environ.get('AI_TIMEOUT', '60'))
+AI_TIMEOUT = float(os.environ.get('AI_TIMEOUT', '25'))
 # Busca na web (Google Search grounding) no diálogo do Enéas com o Gemini, só quando a mensagem ou o
 # tema pedem fatos atuais (ver tutor.pede_fatos_atuais). AI_SEARCH=False desliga.
-AI_SEARCH_ENABLED = os.environ.get('AI_SEARCH', 'True').strip().lower() in ('1', 'true', 'yes', 'on')
+AI_SEARCH_ENABLED = _env_bool('AI_SEARCH', padrao=True)
 
 # Os testes nunca chamam a IA real (ver brainstream/test_runner.py).
 TEST_RUNNER = 'brainstream.test_runner.SemIARealRunner'
