@@ -302,6 +302,10 @@ LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'core:painel'
 LOGOUT_REDIRECT_URL = 'core:index'
 
+# Sessão expira após SESSION_IDLE_MINUTES sem atividade: cada requisição renova o prazo.
+SESSION_COOKIE_AGE = int(os.environ.get('SESSION_IDLE_MINUTES', '20')) * 60
+SESSION_SAVE_EVERY_REQUEST = True
+
 # Login com Google (OAuth 2.0 / OpenID Connect). Sem ID e segredo, o botão avisa que não está configurado.
 # O GOOGLE_REDIRECT_URI precisa estar cadastrado igualzinho no Google Cloud Console.
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '').strip()

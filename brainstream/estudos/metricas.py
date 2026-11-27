@@ -42,14 +42,23 @@ def taxa_de_acerto(estudante):
     return round(100 * totais['acertos'] / totais['questoes'])
 
 
+def sequencias_de_dias(ids_estudantes, agora=None):
+    """``sequencia_de_dias`` de vários estudantes com uma única consulta: {id: dias seguidos}."""
+    agora = agora or timezone.now()
+    dias = defaultdict(set)
+    for estudante_id, inicio in SessaoEstudo.objects.filter(
+            estudante__in=ids_estudantes, data_inicio__lte=agora).values_list('estudante', 'data_inicio'):
+        dias[estudante_id].add(timezone.localtime(inicio).date())
+    hoje = timezone.localtime(agora).date()
+    return {estudante_id: _contar_sequencia(dias[estudante_id], hoje) for estudante_id in ids_estudantes}
+
+
 def sequencia_de_dias(estudante, agora=None):
     """Dias consecutivos com pelo menos uma sessão, terminando hoje ou ontem (o dia atual ainda pode ser estudado)."""
-    hoje = timezone.localtime(agora or timezone.now()).date()
-    dias = {
-        timezone.localtime(inicio).date()
-        for inicio in SessaoEstudo.objects.filter(estudante=estudante, data_inicio__lte=agora or timezone.now())
-        .values_list('data_inicio', flat=True)
-    }
+    return sequencias_de_dias([estudante.pk], agora)[estudante.pk]
+
+
+def _contar_sequencia(dias, hoje):
     dia = hoje if hoje in dias else hoje - timedelta(days=1)
     sequencia = 0
     while dia in dias:
@@ -85,14 +94,16 @@ def ranking_semanal(estudante, agora=None, limite=LIMITE_RANKING):
     )
     ids = [linha['estudante'] for linha in placar[:limite]]
     estudantes = get_user_model().objects.in_bulk(ids)
+    sequencias = sequencias_de_dias(ids + [estudante.pk], agora)
 
     def linha(posicao, aluno, pontos):
         return {
             'posicao': posicao,
             'nome': nome_publico(aluno),
+            'estudante': aluno,
             'iniciais': iniciais(aluno),
             'pontos': pontos,
-            'sequencia': sequencia_de_dias(aluno, agora),
+            'sequencia': sequencias[aluno.pk],
             'eu': aluno.pk == estudante.pk,
         }
 
