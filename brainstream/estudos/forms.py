@@ -3,6 +3,7 @@ from django.db import transaction
 from django.db.models import Count
 
 from .models import CATEGORIA_GERAL, MensagemSessao, SessaoEstudo, Tema, normalizar_nome_tema
+from .services import validacao_tema
 
 LIMITE_SUGESTOES = 6
 
@@ -36,7 +37,10 @@ class IniciarSessaoForm(forms.Form):
     )
 
     def clean_tema(self):
-        return normalizar_nome_tema(self.cleaned_data['tema'])
+        tema = normalizar_nome_tema(self.cleaned_data['tema'])
+        if not validacao_tema.tema_academico(tema):
+            raise forms.ValidationError(validacao_tema.MENSAGEM_RECUSA, code='tema_nao_academico')
+        return tema
 
     def clean(self):
         dados = super().clean()

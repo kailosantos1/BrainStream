@@ -36,6 +36,15 @@ Figura 9 e Seções 3.2 e 3.4.3 do PDF. Ver também [[painel-e-metricas]].
 - Prompt de sistema: persona socrática (Overholser, 1992), nunca entrega respostas, termina com exatamente uma pergunta, máx. ~4 frases, só conteúdo acadêmico. O nome do tema vai entre `<tema>` como dado; `<` e `>` são removidos dele.
 - O filtro é heurístico: pega o óbvio, sem custo. Desvios sutis ficam a cargo do prompt.
 
+## Classificação do tema (antes de criar a sessão)
+
+- Motivo: o context locking só filtra mensagens, e o prompt manda falar "do tema". Um tema que já é desvio (caso real: "porque minha rola ta inchada") virava escopo legítimo e a IA conversava normalmente. Vale para os três modos, porque Quiz/Speedrun geram questões do tema.
+- `services/validacao_tema.tema_academico`, chamado em `IniciarSessaoForm.clean_tema`: a IA responde só SIM/NAO (`PROMPT_CLASSIFICACAO`, tema entre `<tema>` como dado, via `tema_seguro`). Anatomia, sexualidade e saúde como conteúdo ("sistema reprodutor", "ISTs") passam; dúvida médica pessoal, vulgaridade, fofoca, aposta, ordem ao sistema não.
+- Temas curados (categoria ≠ `Geral`) pulam a chamada. Temas `Geral` criados antes da trava **não** ganham passe livre.
+- Falha da IA (limite, rede, resposta fora do formato) **deixa passar** (decisão: não travar o estudo por indisponibilidade; o context locking e o prompt seguem valendo). `TutorIndisponivel('recusa')` (filtro de segurança do provedor) conta como tema impróprio.
+- Cache de 24 h por tema normalizado (só resultados definitivos). Modo simulado aceita qualquer tema. O log registra a recusa sem o texto do tema.
+- Testes em `brainstream/tests/test_validacao_tema.py`.
+
 ## IA: provedores
 
 - `tutor.provedor()`: `AI_PROVIDER` (`gemini`/`google` ou `anthropic`/`claude`); vazio ou `auto` detecta pela chave (`AIza...` = Gemini, senão Claude). Valor desconhecido → erro no log e `TutorIndisponivel` (não adivinha).

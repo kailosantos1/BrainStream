@@ -19,6 +19,7 @@
 
 ## Tutor Enéas
 
+- Todo tema novo passa por `estudos/services/validacao_tema.tema_academico` (IA responde SIM/NAO) ao criar a sessão; falha da IA libera o tema, recusa por segurança bloqueia.
 - Toda mensagem do estudante passa por `estudos/services/context_locking.verificar` antes da IA; bloqueios nunca chamam a LLM. Sessões são sempre buscadas filtrando `estudante=request.user`. Histórico e páginas de sessão também filtram `visivel_no_historico=True` (excluir só esconde); métricas e ranking nunca filtram, para os pontos serem preservados.
 - Testes nunca chamam a API real: o `TEST_RUNNER` do projeto zera `AI_API_KEY`/`AI_PROVIDER`/`AI_MODEL`; para testar o caminho real, use `override_settings(...)` com mocks de `estudos.services.tutor` ou `google.genai.Client`.
 - Respostas de Quiz e Speedrun são validadas no servidor; gabarito e explicação nunca vão ao HTML antes da resposta, e o prazo do Speedrun é medido no servidor (o relógio da tela é só visual). Detalhes em `.obsidian-vault/arquitetura/modo-guiado-e-context-locking.md`.
