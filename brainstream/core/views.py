@@ -1,10 +1,14 @@
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.cache import never_cache
+from django.views.decorators.http import require_GET, require_http_methods
 
 from estudos.forms import IniciarSessaoForm
-from estudos.metricas import iniciais, resumo_do_painel
+from estudos.metricas import iniciais, ranking_semanal, resumo_do_painel
 from estudos.models import SessaoEstudo
+
+from .middleware import sem_renovar_sessao
 
 LIMITE_HISTORICO = 8
 
@@ -43,3 +47,13 @@ def painel(request):
         ],
         **resumo_do_painel(request.user),
     }, status=400 if form.errors else 200)
+
+
+@require_GET
+@never_cache
+@sem_renovar_sessao
+def ranking_ao_vivo(request):
+    """Trecho HTML do ranking semanal que o painel busca periodicamente. Não renova a sessão por inatividade."""
+    if not request.user.is_authenticated:
+        return HttpResponse(status=401)  # o JS recarrega a página, que leva ao login
+    return render(request, 'core/_ranking_conteudo.html', {'ranking': ranking_semanal(request.user)})

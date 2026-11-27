@@ -74,3 +74,56 @@
     });
   });
 }());
+
+(function () {
+  // Ranking ao vivo: busca o trecho do servidor a cada 30 s, só com a aba visível.
+  // Sem JS, o ranking do carregamento continua legível; a busca não renova a sessão por inatividade.
+  const lista = document.querySelector('[data-ranking-url]');
+  if (!lista || !window.fetch) {
+    return;
+  }
+  const INTERVALO_MS = 30000;
+  let timer = null;
+  let buscando = false;
+
+  const agendar = function () {
+    window.clearTimeout(timer);
+    if (document.visibilityState === 'visible') {
+      timer = window.setTimeout(atualizar, INTERVALO_MS);
+    }
+  };
+
+  const atualizar = function () {
+    if (buscando) {
+      return;
+    }
+    buscando = true;
+    fetch(lista.dataset.rankingUrl, { headers: { Accept: 'text/html' }, credentials: 'same-origin' })
+      .then(function (resposta) {
+        if (resposta.status === 401) {
+          window.location.reload(); // sessão expirou: a página leva ao login
+          return null;
+        }
+        return resposta.ok ? resposta.text() : null;
+      })
+      .then(function (html) {
+        if (html !== null && html.trim() !== lista.innerHTML.trim()) {
+          lista.innerHTML = html;
+        }
+      })
+      .catch(function () { /* rede instável: tenta de novo no próximo ciclo */ })
+      .finally(function () {
+        buscando = false;
+        agendar();
+      });
+  };
+
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') {
+      atualizar(); // voltou para a aba: atualiza na hora
+    } else {
+      window.clearTimeout(timer);
+    }
+  });
+  agendar();
+}());

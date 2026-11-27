@@ -7,4 +7,5 @@ app_name = 'core'
 urlpatterns = [
     path('', views.index, name='index'),
     path('painel/', views.painel, name='painel'),
+    path('painel/ranking/', views.ranking_ao_vivo, name='ranking'),
 ]

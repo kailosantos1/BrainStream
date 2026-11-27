@@ -95,3 +95,41 @@ class RankingConsultasTests(TestCase):
         for aluno in alunos:
             self.assertEqual(sequencias[aluno.pk], sequencia_de_dias(aluno, self.agora))
         self.assertEqual(sequencias[alunos[1].pk], 3)
+
+
+class RankingAoVivoTests(TestCase):
+    def setUp(self):
+        self.estudante = get_user_model().objects.create_user('vivo@exemplo.com', 'senha-forte-123', nome='Eva Rocha')
+        tema = Tema.objects.create(nome='Física', slug='fisica', categoria='Física')
+        SessaoEstudo.objects.create(
+            estudante=self.estudante, tema=tema, modo=SessaoEstudo.Modo.QUIZ,
+            status=SessaoEstudo.Status.CONCLUIDA, data_fim=timezone.now(), pontuacao=40,
+        )
+
+    def test_painel_aponta_para_o_ranking_ao_vivo(self):
+        self.client.force_login(self.estudante)
+        resposta = self.client.get(reverse('core:painel'))
+        self.assertContains(resposta, f'data-ranking-url="{reverse("core:ranking")}"')
+
+    def test_trecho_do_ranking_traz_as_linhas_sem_cache(self):
+        self.client.force_login(self.estudante)
+        resposta = self.client.get(reverse('core:ranking'))
+        self.assertEqual(resposta.status_code, 200)
+        self.assertContains(resposta, 'painel-ranking-row is-me')
+        self.assertNotContains(resposta, '<html')
+        self.assertIn('no-store', resposta['Cache-Control'])
+
+    def test_atualizacao_automatica_nao_renova_a_sessao(self):
+        self.client.force_login(self.estudante)
+        resposta = self.client.get(reverse('core:ranking'))
+        self.assertNotIn(settings.SESSION_COOKIE_NAME, resposta.cookies)
+        resposta = self.client.get(reverse('core:painel'))
+        self.assertIn(settings.SESSION_COOKIE_NAME, resposta.cookies)
+
+    def test_sem_login_responde_401_em_vez_de_redirecionar(self):
+        resposta = self.client.get(reverse('core:ranking'))
+        self.assertEqual(resposta.status_code, 401)
+
+    def test_so_aceita_get(self):
+        self.client.force_login(self.estudante)
+        self.assertEqual(self.client.post(reverse('core:ranking')).status_code, 405)

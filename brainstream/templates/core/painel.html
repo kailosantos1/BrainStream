@@ -117,21 +117,8 @@
           <i class="bi bi-chevron-up" aria-hidden="true"></i><span>Ocultar</span>
         </button>
       </div>
-      <div class="collapse show" id="ranking-lista">
-        {% if ranking.linhas %}
-          <ol class="painel-ranking-list">
-            {% for linha in ranking.linhas %}
-              {% include 'core/_ranking_linha.html' %}
-            {% endfor %}
-            {% if ranking.minha_linha %}
-              <li class="painel-ranking-gap" aria-hidden="true">…</li>
-              {% include 'core/_ranking_linha.html' with linha=ranking.minha_linha %}
-            {% endif %}
-          </ol>
-          {% if not ranking.posicao %}<p class="painel-empty">Conclua uma sessão com pontos para entrar no ranking desta semana.</p>{% endif %}
-        {% else %}
-          <p class="painel-empty">Ninguém pontuou nesta semana ainda. Conclua uma sessão para abrir o ranking.</p>
-        {% endif %}
+      <div class="collapse show" id="ranking-lista" data-ranking-url="{% url 'core:ranking' %}">
+        {% include 'core/_ranking_conteudo.html' %}
       </div>
     </section>
   </main>

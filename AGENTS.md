@@ -15,6 +15,7 @@
 
 - `AUTH_USER_MODEL = 'accounts.Estudante'`: o login é o e-mail (único, salvo em minúsculas) e não há `username`. Use `get_user_model()`/`settings.AUTH_USER_MODEL`, nunca `auth.User`.
 - Logout só via POST com CSRF. Redirecionamentos `next` passam por `url_has_allowed_host_and_scheme`.
+- A sessão expira por inatividade (`SESSION_IDLE_MINUTES`). Requisições automáticas do front (polling) usam `core.middleware.sem_renovar_sessao` e respondem 401 sem login, para não manter a sessão viva sozinhas.
 - Login com Google só entra numa conta existente se o Google confirmar `email_verified`; `state` é de uso único e o fluxo usa PKCE. Não relaxe essas checagens.
 
 ## Tutor Enéas
